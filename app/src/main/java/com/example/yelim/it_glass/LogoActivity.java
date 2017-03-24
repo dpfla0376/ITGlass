@@ -1,8 +1,8 @@
 package com.example.yelim.it_glass;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,8 +11,8 @@ import android.util.Log;
 public class LogoActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_MAIN = 1001;
-    public static SQLiteDatabase db;
-    boolean databaseCreated;
+    boolean firstCome;
+    final DatabaseManager dbManager = new DatabaseManager(LogoActivity.this, DatabaseManager.DB_NAME + ".db", null, 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,31 +20,27 @@ public class LogoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_logo);
 
         //Database checked (created or not)
-        try {
-            db = openOrCreateDatabase("itGlass", MODE_WORLD_READABLE, null);
-            databaseCreated = true;
-            Log.d("database", "-----created-----");
-
+        if(dbManager.isEmpty(Database.UserTable._TABLENAME)) {
+            firstCome = true;
+            Log.d("FIRST_COME", "-----true-----");
         }
-        catch (Exception e) {
-            databaseCreated = false;
-            e.printStackTrace();
-            Log.e("database", "-----not created-----");
+        else {
+            firstCome = false;
+            Log.d("FIRST_COME", "-----false-----");
         }
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(databaseCreated) {
-                    createDatabase();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                if(firstCome) {
+                    Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
                     startActivity(intent);
                     finish();
                 }
 
                 else {
-                    Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     finish();
                 }

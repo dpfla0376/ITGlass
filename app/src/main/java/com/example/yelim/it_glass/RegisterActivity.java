@@ -2,10 +2,12 @@ package com.example.yelim.it_glass;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +18,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button idConfirmButton;
 
     private Context mContext;
+    final DatabaseManager dbManager = new DatabaseManager(RegisterActivity.this, DatabaseManager.DB_NAME + ".db", null, 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,22 +52,24 @@ public class RegisterActivity extends AppCompatActivity {
                     //Server로 ID 전송 및 저장
                     ServerManager.saveID(inputID.getText().toString());
 
-                    //DB에 ID 정보보 저장
-                   Cursor c = LogoActivity.db.rawQuery("select * from where ", null);
-                    if(c.getCount() == 0) {
+                    //DB에 ID 정보 저장
+                    String[] record = new String[1];                                //record 크기 할당(맞나..?)
+                    for(int i=0; i<record.length; i++) record[i] = new String();    //record 초기화
+                    record[0] = inputID.getText().toString();
+                    dbManager.insertToDatabase(Database.UserTable._TABLENAME, record);
+                    Log.d("DATABASE", "---------user_registered--------");
 
-                    }
-                    else {
-
-                    }
 
                     //(확인창 띄우고) MainActivity 진입
                     new AlertDialog.Builder(mContext)
-                            .setTitle("Warning!")
-                            .setMessage("Already in use. Please do it again.")
+                            .setTitle("Welcome!")
+                            .setMessage("Hello, " + record[0] + "!")
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 }
                             })
                             .show();

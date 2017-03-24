@@ -14,7 +14,7 @@ public class ServerManager {
      * @return
      */
     public static boolean hasID(String ID) {
-        return true;
+        return false;
     }
 
     /**
