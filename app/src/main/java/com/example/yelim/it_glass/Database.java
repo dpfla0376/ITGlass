@@ -33,13 +33,18 @@ public final class Database {
     public static final class FriendTable implements BaseColumns {
 
         public static final String FRIEND_ID = "id";
-        //public static final String LIGHT = "light";
+        public static final String R = "r";
+        public static final String G = "g";
+        public static final String B = "b";
 
         public static final String _TABLENAME = "FRIEND";
 
         public static final String _CREATE = "CREATE TABLE "
                 + _TABLENAME + "("
-                + FRIEND_ID + " TEXT PRIMARY KEY);";
+                + FRIEND_ID + " TEXT PRIMARY KEY, "
+                + R + " INT, "
+                + G + " INT, "
+                + B + " INT);";
     }
 
 }

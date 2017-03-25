@@ -22,7 +22,47 @@ public class ServerManager {
      * and save it in Server Database
      * @param ID
      */
-    public static void saveID(String ID) {
+    public static void saveUserID(String ID) {
+
+    }
+
+    /**
+     * add friend of userID with friendID to server database
+     * @param userID
+     * @param friendID
+     */
+    public static void addFriend(String userID, String friendID) {
+
+    }
+
+    /**
+     * add friend of userID with friendID and color RGB to server database
+     * @param userID
+     * @param friendID
+     * @param R
+     * @param G
+     * @param B
+     */
+    public static void addFriend(String userID, String friendID, int R, int G, int B) {
+
+    }
+
+    /**
+     * delete friend with friendID from server database
+     * @param friendID
+     */
+    public static void deleteFriend(String friendID) {
+
+    }
+
+    /**
+     * change light color of friendID into RGB in server database
+     * @param friendID
+     * @param R
+     * @param G
+     * @param B
+     */
+    public static void changeLightColor(String friendID, int R, int G, int B) {
 
     }
 }
