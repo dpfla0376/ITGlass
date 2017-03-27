@@ -26,18 +26,20 @@ public class MainActivity extends AppCompatActivity {
         BluetoothManager.CallBack callBack = new BluetoothManager.CallBack() {
             @Override
             public void callBackMethod(int flag, String fromDeviceMessage) {
-                Log.d("Bluetooth","I'm MainActivity. I got your message");
+                Log.d("Bluetooth","I'm MainActivity. I got your message : "+fromDeviceMessage);
+
                 switch(flag){
                     case 100 :
-                        Toast.makeText(getApplicationContext(),"Device is connected",Toast.LENGTH_LONG);
+                        Log.d("Bluetooth","DEVICE IS CONNECTED");
                         break;
                     case 200 :
-                        Toast.makeText(getApplicationContext(),fromDeviceMessage,Toast.LENGTH_LONG);
+                        Log.d("Bluetooth","NEW MESSAGE FROM YOUR DEVICE : "+fromDeviceMessage);
                         break;
                 }
             }
         };
         btManager.setCallBack(callBack);
+
 
     }
 

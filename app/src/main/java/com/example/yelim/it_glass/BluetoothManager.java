@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.LogRecord;
@@ -46,90 +47,92 @@ public class BluetoothManager {
     private Context context;
 
     private CallBack callBack;
+    private boolean isReady = false;
+    private ArrayList<String>  waitingTask;
 
     /**
      * int howMany : 사용자가 마신 술의 양
-     * */
+     */
     BluetoothManager(Context context) {
         this.context = context;
         checkBluetooth();
+        waitingTask = new ArrayList<>();
     }
 
-    /** 블루투스의 활성 상태 체크 , 활성화
-     *  return : 블루투스 미지원일 때 -1, 활성 상태가 아닐때 0, 활성 상태일때 1.
-     *  블루투스가 활성 상태일때 '장치 선택(selectDevice())'이 실행됨
-     * */
+    /**
+     * 블루투스의 활성 상태 체크 , 활성화
+     * return : 블루투스 미지원일 때 -1, 활성 상태가 아닐때 0, 활성 상태일때 1.
+     * 블루투스가 활성 상태일때 '장치 선택(selectDevice())'이 실행됨
+     */
     int checkBluetooth() {
 
-       Log.d("Bluetooth","Let's checking bluetooth state");
-       myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Log.d("Bluetooth", "Let's checking bluetooth state");
+        myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-       if(myBluetoothAdapter == null ) {
-           // 블루투스 미지원
-           return -1;
-       }
-       else {
-           if (myBluetoothAdapter.isEnabled()) {
-               // 활성 상태. selectDevice(); 실행하면 됨.
+        if (myBluetoothAdapter == null) {
+            // 블루투스 미지원
+            return -1;
+        } else {
+            if (myBluetoothAdapter.isEnabled()) {
+                // 활성 상태. selectDevice(); 실행하면 됨.
                 selectDevice();
-               return 1;
-           }
-           else // 구현해야됨
-               return 0;
+                return 1;
+            } else // 구현해야됨
+                return 0;
 
-       }
+        }
     }
 
-    /** 장치 선택 및 연결
+    /**
+     * 장치 선택 및 연결
      * return : 장치가 없는 경우 -1, 아닌 경우 0
      * 장치를 선택한 경우 connectToMyDevice(String deviceName) 실행하여 연결시도.
-     * */
+     */
     private void selectDevice() {
         deviceList = myBluetoothAdapter.getBondedDevices(); // 페어링된 장치 목록
 
-        if(deviceList.size()==0) { // 없는 경우
-            Log.d("BLUETOOTH","NO PAIRED DEVICE");
-        }
-        else {
+        if (deviceList.size() == 0) { // 없는 경우
+            Log.d("BLUETOOTH", "NO PAIRED DEVICE");
+        } else {
             // 장치 선택하기
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("블루투스 장치 선택");
 
             // 페어링 된 블루투스 장치의 이름 목록 작성
             List<String> listItems = new ArrayList<String>();
-            for(BluetoothDevice device : deviceList) {
+            for (BluetoothDevice device : deviceList) {
                 listItems.add(device.getName());
-                }
-                listItems.add("취소");    // 취소 항목 추가
-
-                final CharSequence[] items = listItems.toArray(new CharSequence[listItems.size()]);
-
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (item == deviceList.size()) {
-                            // 연결할 장치를 선택하지 않고 '취소'를 누른 경우
-                        } else {
-                            // 연결할 장치를 선택한 경우
-                            // 선택한 장치와 연결을 시도함
-                            connectToMyDevice(items[item].toString());
-                        }
-                    }
-                });
-
-                builder.setCancelable(false);    // 뒤로 가기 버튼 사용 금지
-                AlertDialog alert = builder.create();
-                alert.show();
             }
+            listItems.add("취소");    // 취소 항목 추가
+
+            final CharSequence[] items = listItems.toArray(new CharSequence[listItems.size()]);
+
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    if (item == deviceList.size()) {
+                        // 연결할 장치를 선택하지 않고 '취소'를 누른 경우
+                    } else {
+                        // 연결할 장치를 선택한 경우
+                        // 선택한 장치와 연결을 시도함
+                        connectToMyDevice(items[item].toString());
+                    }
+                }
+            });
+
+            builder.setCancelable(false);    // 뒤로 가기 버튼 사용 금지
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
 
     }
 
     /**
      * myDeviceName 장치에 연결한다.
      * 소켓 i/o, 쓰레드를 이용해 데이터를 송수신한다.
-     * */
+     */
     private int connectToMyDevice(String myDeviceName) {
 
-        Log.d("Bluetooth","OK, Let's connect to your device");
+        Log.d("Bluetooth", "OK, Let's connect to your device");
         myDevice = getMyDeviceFromList(myDeviceName);
 
         // 블루투스 프로토콜
@@ -141,14 +144,15 @@ public class BluetoothManager {
 
             // connected!!
             mySocket.connect();
-            Log.d("Bluetooth","connected.");
+            Log.d("Bluetooth", "connected.");
 
             // 스트림 준비
             toDeviceStream = mySocket.getOutputStream();
             fromDeviceStream = mySocket.getInputStream();
 
-            Log.d("Bluetooth","OK, I'm READY");
-            callBack.callBackMethod(CONNECTED,"CONNECTED");
+            Log.d("Bluetooth", "OK, I'm READY");
+            isReady = true;
+            callBack.callBackMethod(CONNECTED, "CONNECTED");
 
             // 다음 단계 : 데이터 수신
             listenData();
@@ -159,50 +163,40 @@ public class BluetoothManager {
             return -1;
         }
     }
+
     private void listenData() {
-
-        handler = new Handler(){
-
-            @Override
-            public void handleMessage(Message msg){
-
-            }
-
-        };
-
-
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 byte[] readSaveBuffer = new byte[1024];
-                int savePosition =0 ;
-                while(true){
+                int savePosition = 0;
+                while (true) {
                     try {
                         int remainedBufferSize = fromDeviceStream.available();
 
-                        if(remainedBufferSize>0) {
-                        byte[] buffer = new byte[remainedBufferSize]; // 남은 버퍼 공간만큼만 쓰자
-                        fromDeviceStream.read(buffer);
+                        if (remainedBufferSize > 0) {
+                            byte[] buffer = new byte[remainedBufferSize]; // 남은 버퍼 공간만큼만 쓰자
+                            fromDeviceStream.read(buffer);
 
-                        for(int i=0; i<remainedBufferSize; i++) {
-                            if (buffer[i] == '\n') {
-                                // 기기로부터 한 문장 입력을 다 받았다.
-                                byte[] encodedBytes = new byte[savePosition];
-                                // 여태 하나하나 잘 모아왔던 거 encodedBytes에 복사하자
-                                System.arraycopy(readSaveBuffer, 0, encodedBytes, 0, encodedBytes.length);
-                                final String fromDeviceMessage = new String(encodedBytes, "UTF-8");
-                                savePosition = 0;
+                            for (int i = 0; i < remainedBufferSize; i++) {
+                                if (buffer[i] == '\n') {
+                                    // 기기로부터 한 문장 입력을 다 받았다.
+                                    byte[] encodedBytes = new byte[savePosition];
+                                    // 여태 하나하나 잘 모아왔던 거 encodedBytes에 복사하자
+                                    System.arraycopy(readSaveBuffer, 0, encodedBytes, 0, encodedBytes.length);
+                                    final String fromDeviceMessage = new String(encodedBytes, "UTF-8");
+                                    savePosition = 0;
 
-                                // 최종 수신된 문자열은 fromDeviceMessage이다.
-                                // data를 넘겨주면 되겠음.
-                                callBack.callBackMethod(MESSAGE,fromDeviceMessage);
+                                    // 최종 수신된 문자열은 fromDeviceMessage이다.
+                                    // data를 넘겨주면 되겠음.
+                                    callBack.callBackMethod(MESSAGE, fromDeviceMessage);
 
-                                Log.d("Bluetooth","From Device : "+fromDeviceMessage);
+                                    Log.d("Bluetooth", "From Device : " + fromDeviceMessage);
 
-                            } else {
-                                readSaveBuffer[savePosition++] = buffer[i];
+                                } else {
+                                    readSaveBuffer[savePosition++] = buffer[i];
+                                }
                             }
-                        }
                         }
 
                     } catch (IOException e) {
@@ -211,13 +205,15 @@ public class BluetoothManager {
                 }
             }
         });
+        thread.start();
     }
+
     // 블루투스 장치 이름을 가지고, 블루투스 장치 객체를 리턴
     private BluetoothDevice getMyDeviceFromList(String myDeviceName) {
         BluetoothDevice selectedDevice = null;
         // 찾은 디바이스 처음부터 끝까지
-        for(BluetoothDevice device :deviceList){
-            if(myDeviceName.equals(device.getName())) {
+        for (BluetoothDevice device : deviceList) {
+            if (myDeviceName.equals(device.getName())) {
                 selectedDevice = device;
                 break;
             }
@@ -226,17 +222,33 @@ public class BluetoothManager {
     }
 
     public void writeData(String toDeviceString) {
-        try {
-            toDeviceStream.write(toDeviceString.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (isReady) {
+            while(waitingTask.size()>0)
+            {
+                try {
+                    toDeviceStream.write(waitingTask.get(0).toString().getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                waitingTask.remove(0);
+            }
+            try {
+                toDeviceStream.write(toDeviceString.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            waitingTask.add(toDeviceString);
         }
     }
 
     public interface CallBack {
         void callBackMethod(int flag, String fromDeviceMessage);
     }
-    public void setCallBack(CallBack callBack){
-        this.callBack=callBack;
+
+    public void setCallBack(CallBack callBack) {
+        this.callBack = callBack;
     }
 }
