@@ -33,8 +33,10 @@ public class LogoActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
                 if(firstCome) {
                     Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+
                     startActivity(intent);
                     finish();
                 }
