@@ -25,7 +25,7 @@ public class ServerDatabaseManager {
     private static FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
     private static DatabaseReference mDatabaseReference;
     private static ChildEventListener mChildEventListener;
-    private static Long value;
+    private static Object value;
     private static String userID;
     private static GenericTypeIndicator<List<Friend>> t = new GenericTypeIndicator<List<Friend>>() {};
     private static List<Friend> friendList = new ArrayList<Friend>();
@@ -54,7 +54,7 @@ public class ServerDatabaseManager {
         mDatabaseReference.child(ID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                value = dataSnapshot.getValue(Long.class);
+                value = dataSnapshot.getValue(Object.class);
             }
 
             @Override
@@ -82,7 +82,8 @@ public class ServerDatabaseManager {
         //access [ user_list ] line in firebase
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
 
-        mDatabaseReference.child(userID).setValue(0);
+        mDatabaseReference.child(userID).child("drink").setValue(0);
+        mDatabaseReference.child(userID).child("friend_list").setValue(null);
     }
 
     /**
@@ -111,8 +112,8 @@ public class ServerDatabaseManager {
     public static boolean addFriend(String userID, String friendID) {
         if(hasID(friendID)) {
             //access [ friend_list ] line in firebase
-            mDatabaseReference = mFirebaseDatabase.getReference("friend_list");
-            mDatabaseReference.child(userID).child(friendID).setValue("255/255/255");
+            mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+            mDatabaseReference.child(userID).child("friend_list").child(friendID).setValue("255.255.255");
             return true;
         }
         //there is no friendID
@@ -135,8 +136,8 @@ public class ServerDatabaseManager {
     public static boolean addFriend(String userID, String friendID, int R, int G, int B) {
         if(hasID(friendID)) {
             //access [ friend_list ] line in firebase
-            mDatabaseReference = mFirebaseDatabase.getReference("friend_list");
-            mDatabaseReference.child(userID).child(friendID).setValue(R + "/" + G + "/" + B + "");
+            mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+            mDatabaseReference.child(userID).child("friend_list").child(friendID).setValue(R + "." + G + "." + B + "");
             return true;
         }
         //there is no friendID
@@ -153,8 +154,8 @@ public class ServerDatabaseManager {
      */
     public static void deleteFriend(String userID, String friendID) {
         //access [ friend_list ] line in firebase
-        mDatabaseReference = mFirebaseDatabase.getReference("friend_list");
-        mDatabaseReference.child(userID).child(friendID).removeValue();
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+        mDatabaseReference.child(userID).child("friend_list").child(friendID).removeValue();
 
     }
 
@@ -186,9 +187,9 @@ public class ServerDatabaseManager {
      */
     public static void getFriend(String userID) {
         Log.d("SERVER_DBM", "In GetFriend Method");
-        mDatabaseReference = mFirebaseDatabase.getReference("friend_list");
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
         Log.d("SERVER_DBM", "GetReferenceSuccessful");
-        mDatabaseReference.child(userID).addValueEventListener(new ValueEventListener() {
+        mDatabaseReference.child(userID).child("friend_list").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -211,6 +212,7 @@ public class ServerDatabaseManager {
      * @param friends
      */
     private static void collectFriends(Map<String,String> friends) {
+        friendList.clear();
         for (Map.Entry<String, String> entry : friends.entrySet()){
             friendList.add(new Friend(entry.getKey(), entry.getValue()));
         }

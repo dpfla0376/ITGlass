@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         button5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ServerDatabaseManager.addFriend("한", "시험");
+                ServerDatabaseManager.addFriend("시험", "한");
                 //Log.d("MainActivity", "Token : " + token);
                 //Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT);
             }
