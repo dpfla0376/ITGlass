@@ -27,7 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         inputID = (EditText) findViewById(R.id.inputID);
-        idConfirmButton = (Button) findViewById(R.id.idConfrimButton);
+        idConfirmButton = (Button) findViewById(R.id.idConfirmButton);
         mContext = this;
 
         idConfirmButton.setOnClickListener(new View.OnClickListener() {
