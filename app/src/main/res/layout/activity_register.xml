@@ -4,7 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ABF0D1"
     tools:context="com.example.yelim.it_glass.RegisterActivity">
+
+    <TextView
+        android:id="@+id/registerTextView"
+        android:text="가입하기"
+        android:textSize="25dp"
+        android:textColor="#12221b"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임"
+        android:textSize="15dp"
+        android:textColor="#12221b"
+        android:id="@+id/nicknameTextView"
+        android:layout_alignBaseline="@+id/inputID"
+        android:layout_alignBottom="@+id/inputID"
+        android:layout_toLeftOf="@+id/inputID" />
 
     <EditText
         android:id="@+id/inputID"
@@ -13,17 +32,18 @@
         android:layout_marginTop="148dp"
         android:ems="10"
         android:inputType="textPersonName"
+        android:background="@null"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/idConfrimButton"
+        android:id="@+id/idConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="17dp"
         android:layout_marginRight="17dp"
-        android:text="(Image)"
         android:layout_alignBaseline="@+id/inputID"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/next_button" />
 </RelativeLayout>
