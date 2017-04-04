@@ -19,6 +19,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Context mContext;
     final DatabaseManager dbManager = new DatabaseManager(RegisterActivity.this, DatabaseManager.DB_NAME + ".db", null, 1);
+    //ServerDatabaseManager serverDBM = new ServerDatabaseManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //inputID of user is already in Server
-                if(ServerManager.hasID(inputID.getText().toString())) {
+                if(ServerDatabaseManager.hasID(inputID.getText().toString())) {
                     //중복 경고창 띄우고 EditText 내용 지우고 재입력 받기
                     inputID.setText("");
                     new AlertDialog.Builder(mContext)
@@ -50,7 +51,8 @@ public class RegisterActivity extends AppCompatActivity {
                 //inputID of user is not in Server
                 else {
                     //Server로 ID 전송 및 저장
-                    ServerManager.saveUserID(inputID.getText().toString());
+                    ServerDatabaseManager.saveUserID(inputID.getText().toString());
+                    ServerDatabaseManager.setLocalUserID(inputID.getText().toString());
 
                     //DB에 ID 정보 저장
                     String[] record = new String[1];                                //record 크기 할당(맞나..?)

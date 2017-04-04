@@ -5,14 +5,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     final DatabaseManager dbManager = new DatabaseManager(MainActivity.this, DatabaseManager.DB_NAME + ".db", null, 1);
-    ServerDatabaseManager serverDBM = new ServerDatabaseManager();
+    ListView friendListView;
     Button insButton;
+    Button button2;
     Button button3;
     Button button4;
     Button button5;
@@ -24,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("DATABASE", "---------" + dbManager.getDatabasePath() + "---------");
-
+/*
         insButton = (Button) findViewById(R.id.insButton);
         insButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,13 +39,46 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT);
             }
         });
+*/
+        button2 = (Button) findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //콜백 써야될듯!!
+                ServerDatabaseManager.getFriend("한");
+                Log.d("MainActivity", "---------------out of getFriend");
+                Callback callBack = new Callback(){
+                    @Override
+                    public void callBackMethod() {
+                        Log.d("MainActivity", "---------------in callBackMethod");
+                        //ServerDatabaseManager.getFriend("한");
+                        Log.d("MainActivity", "---------------FriendListSize : " + ServerDatabaseManager.getFriendList().size());
+                        if (ServerDatabaseManager.getFriendList().size() > 0) {
+                            Log.d("MainActivity", "---------------in callBackMethod [ if ]");
+                            String token = "";
+                            for (int i = 0; i < ServerDatabaseManager.getFriendList().size(); i++) {
+                                token = token + ServerDatabaseManager.getFriendList().get(i).getfID() + " : "
+                                        + ServerDatabaseManager.getFriendList().get(i).getfLight() + " / ";
+                            }
+                            Log.d("MainActivity", "Token : " + token);
+                            Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Log.e("MainActivity", "---------------list is empty");
+                        }
+                    }
 
+                };
+                ServerDatabaseManager.setCallBack(callBack);
+
+            }
+        });
         button3 = (Button) findViewById(R.id.button3);
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(serverDBM.hasID("시험") == false) {
-                    serverDBM.saveUserID("시험");
+                if(ServerDatabaseManager.hasID("시험") == false) {
+                    ServerDatabaseManager.saveUserID("시험");
                 }
                 //Log.d("MainActivity", "Token : " + token);
                 //Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT);
@@ -50,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                serverDBM.deleteFriend("시험", "한");
+                ServerDatabaseManager.deleteFriend("시험", "한");
                 //Log.d("MainActivity", "Token : " + token);
                 //Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT);
             }
@@ -59,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         button5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                serverDBM.addFriend("시험", "한");
+                ServerDatabaseManager.addFriend("한", "시험");
                 //Log.d("MainActivity", "Token : " + token);
                 //Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT);
             }
@@ -68,19 +106,16 @@ public class MainActivity extends AppCompatActivity {
         button6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                serverDBM.changeLightColor("시험", "한", 0, 0, 0);
+                ServerDatabaseManager.changeLightColor("시험", "한", 0, 0, 0);
                 //Log.d("MainActivity", "Token : " + token);
                 //Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT);
             }
         });
 
-        serverTest();
-
-
-
+        friendListView = (ListView) findViewById(R.id.friend_list);
+        //friendListView.setAdapter(new ItemFriendListAdapter(MainActivity.this, ));
     }
 
-    void serverTest() {
 
-    }
+
 }

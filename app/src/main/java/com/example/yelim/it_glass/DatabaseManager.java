@@ -28,7 +28,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // 새로운 테이블 생성
         this.db = db;
         this.db.execSQL(Database.UserTable._CREATE);
-        this.db.execSQL(Database.FriendTable._CREATE);
+        //this.db.execSQL(Database.FriendTable._CREATE);
         Log.d("DATABASE", "-------created-------");
     }
 
