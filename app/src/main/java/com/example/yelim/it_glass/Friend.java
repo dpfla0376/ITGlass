@@ -2,6 +2,7 @@ package com.example.yelim.it_glass;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ public class Friend {
 
     private String fID;
     private String fLight;
+    private ValueEventListener eventListener;
     //public Map<String, Boolean> stars = new HashMap<>();
 
     public Friend() {
@@ -24,6 +26,12 @@ public class Friend {
     public Friend(String ID, String light) {
         fID = ID;
         fLight = light;
+    }
+
+    public Friend(String ID, String light, ValueEventListener eventListener) {
+        fID = ID;
+        fLight = light;
+        setEventListener(eventListener);
     }
 
     public String getfID() {
@@ -41,6 +49,10 @@ public class Friend {
 
     public void setfLight(String fLight) {
         this.fLight = fLight;
+    }
+
+    public void setEventListener(ValueEventListener eventListener) {
+        this.eventListener = eventListener;
     }
 /*
     @Exclude
