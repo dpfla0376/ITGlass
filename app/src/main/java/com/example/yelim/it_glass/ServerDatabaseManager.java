@@ -27,7 +27,7 @@ public class ServerDatabaseManager {
     private static ChildEventListener mChildEventListener;
     private static Object value;
     private static String userID;
-    private static GenericTypeIndicator<List<Friend>> t = new GenericTypeIndicator<List<Friend>>() {};
+    //private static ArrayList<> = new ArrayList<>();
     private static List<Friend> friendList = new ArrayList<Friend>();
     private static Callback callback;
     //private ArrayAdapter<String> mAdapter;
@@ -193,7 +193,7 @@ public class ServerDatabaseManager {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Log.d("SERVER_DBM", "-------SingleValueEvent");
+                Log.d("SERVER_DBM", "-------ValueEvent");
                 Log.d("SERVER_DBM", "FriendListSize : " + dataSnapshot.getChildrenCount());
                 collectFriends((Map<String,String>) dataSnapshot.getValue());
                 for(int i=0; i<friendList.size(); i++) Log.d("FRIEND_LIST", friendList.get(i).getfID() + ":" + friendList.get(i).getfLight());
@@ -207,14 +207,63 @@ public class ServerDatabaseManager {
         });
     }
 
+    private static ChildEventListener myEventListener(final String friendID, final String light) {
+        ChildEventListener eventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                // 술을 마시는 모션
+                if(dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 1) {
+                    Log.d("SERVER_DBM", "------- event from " + friendID + " / light " + light + " / drinking");
+                }
+                // 모션 끝. 다시 원상태로 복귀.
+                else if(dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 0) {
+                    Log.d("SERVER_DBM", "------- event from " + friendID + " / light " + light + " / stop drinking");
+                }
+                else {
+                    Log.e("SERVER_DBM", "------ " + friendID + " [ timing ] error");
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                //String message = dataSnapshot.getValue(String.class);
+                //mAdapter.remove(message);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        return eventListener;
+    }
+
     /**
      * Firebase의 database에서 얻어온 data를 형식에 맞도록 조정
      * @param friends
      */
     private static void collectFriends(Map<String,String> friends) {
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
         friendList.clear();
         for (Map.Entry<String, String> entry : friends.entrySet()){
+            mDatabaseReference.child(entry.getKey()).child("drink").addChildEventListener(myEventListener(entry.getKey(), entry.getValue()));
             friendList.add(new Friend(entry.getKey(), entry.getValue()));
+        }
+    }
+
+    public static void addListenerToFriends() {
+        if(friendList != null) {
+
         }
     }
 

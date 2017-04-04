@@ -40,11 +40,17 @@ public class LogoActivity extends AppCompatActivity {
                 }
 
                 else {
+                    setting();
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     finish();
                 }
             }
         }, 2000);
+    }
+
+    private void setting() {
+        ServerDatabaseManager.setLocalUserID(dbManager.getLocalUserName());
+        // 사용자 친구들의 drink에 listener 달기..!
     }
 }

@@ -58,6 +58,23 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     /**
+     * get local user name from local DataBase
+     * @return local user name
+     */
+    public String getLocalUserName() {
+        String name = new String();
+        db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM USER", null);
+        if(c.getCount() != 0) {
+            c.moveToNext();
+            name = c.getString(0);
+            Log.d("LogoActivity", "-------- Local User Name : " + name);
+        }
+
+        return name;
+    }
+
+    /**
      * insert record into [ TABLE_NAME table ]
      * @param TABLE_NAME
      * @param record
