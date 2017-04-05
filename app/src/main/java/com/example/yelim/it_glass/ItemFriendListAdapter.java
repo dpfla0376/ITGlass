@@ -32,6 +32,10 @@ public class ItemFriendListAdapter extends BaseAdapter {
         this.itemFriends = itemFriends;
     }
 
+    public void addItem(ItemFriend itemFriend) {
+        itemFriends.add(itemFriend);
+    }
+
     @Override
     public int getCount() {
         return itemFriends.size();
@@ -50,6 +54,7 @@ public class ItemFriendListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ItemHolder holder;
+        ItemFriendView itemView;
 
         /**
          * 사용자가 처음오면 convertview는 null
@@ -57,23 +62,19 @@ public class ItemFriendListAdapter extends BaseAdapter {
         if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.item_friend, parent, false);
+            //itemView = new ItemFriendView(mContext, itemFriends.get(position));
 
-            for(int i=0; i<ServerDatabaseManager.getFriendList().size(); i++) {
-                holder = new ItemHolder();
+            holder = new ItemHolder();
+            holder.tvFriendID = (TextView) convertView.findViewById(R.id.friend_id);
+            holder.tvFriendDrink = (TextView) convertView.findViewById(R.id.friend_drink);
+            holder.tvFriendLight = (TextView) convertView.findViewById(R.id.friend_light);
 
-                //Server에서 friend_list 접근해서 값 받아와야됨
-                holder.tvFriendID = (TextView) convertView.findViewById(R.id.friend_id);
-                holder.tvFriendID.setText(ServerDatabaseManager.getFriendList().get(i).getfID());
+            holder.tvFriendID.setText(itemFriends.get(position).getFriendID());
+            holder.tvFriendDrink.setText(itemFriends.get(position).getFriendDrink());
+            holder.tvFriendLight.setText(itemFriends.get(position).getFriendLight());
 
-                holder.tvFriendDrink = (TextView) convertView.findViewById(R.id.friend_drink);
-                holder.tvFriendDrink.setText("0잔");
-
-                holder.tvFriendLight = (TextView) convertView.findViewById(R.id.friend_light);
-                holder.tvFriendLight.setText(ServerDatabaseManager.getFriendList().get(i).getfLight());
-
-                //convertview는 항상 tag를 업어간다
-                convertView.setTag(holder);
-            }
+            //convertview는 항상 tag를 업어간다
+            convertView.setTag(holder);
 
         }
         /**
@@ -81,12 +82,20 @@ public class ItemFriendListAdapter extends BaseAdapter {
          */
         else {
             holder = (ItemHolder) convertView.getTag();
+            itemView = (ItemFriendView) convertView;
         }
 
         itemFriend = getItem(position);
         convertView.setOnClickListener(clickDetail(mContext));
 
         return convertView;
+
+/*
+        itemView.setText(0, itemFriends.get(position).getFriendID());
+        itemView.setText(1, itemFriends.get(position).getFriendDrink());
+        itemView.setText(2, itemFriends.get(position).getFriendLight());
+
+        return itemView;*/
     }
 
     private View.OnClickListener clickDetail(final Context context) {

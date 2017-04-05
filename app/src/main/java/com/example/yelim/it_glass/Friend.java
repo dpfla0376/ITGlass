@@ -16,10 +16,11 @@ public class Friend {
 
     private String fID;
     private String fLight;
-    private ValueEventListener eventListener;
+    private String fDrink;
     //public Map<String, Boolean> stars = new HashMap<>();
 
     public Friend() {
+
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
@@ -28,10 +29,10 @@ public class Friend {
         fLight = light;
     }
 
-    public Friend(String ID, String light, ValueEventListener eventListener) {
+    public Friend(String ID, String drink, String light) {
         fID = ID;
+        fDrink = drink;
         fLight = light;
-        setEventListener(eventListener);
     }
 
     public String getfID() {
@@ -40,6 +41,10 @@ public class Friend {
 
     public String getfLight() {
         return fLight;
+    }
+
+    public String getfDrink() {
+        return fDrink;
     }
 
     public void setfID(String fID) {
@@ -51,9 +56,10 @@ public class Friend {
         this.fLight = fLight;
     }
 
-    public void setEventListener(ValueEventListener eventListener) {
-        this.eventListener = eventListener;
+    public void setfDrink(String fDrink) {
+        this.fDrink = fDrink;
     }
+
 /*
     @Exclude
     public Map<String, Object> toMap() {
