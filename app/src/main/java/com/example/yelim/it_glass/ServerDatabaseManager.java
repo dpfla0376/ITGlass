@@ -261,10 +261,16 @@ public class ServerDatabaseManager {
         }
     }
 
-    public static void addListenerToFriends() {
-        if(friendList != null) {
+    public static void turnOnDrinkTiming() {
+        // 술을 마신다 로 변경
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+        mDatabaseReference.child(userID).child("drink").child("timing").setValue(1);
+    }
 
-        }
+    public static void turnOffDrinkTiming() {
+        // 술을 안마신다 로 변경
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+        mDatabaseReference.child(userID).child("drink").child("timing").setValue(0);
     }
 
     public static void initServerDatabase() {
