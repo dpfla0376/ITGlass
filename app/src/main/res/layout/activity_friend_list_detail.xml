@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tvFriendDetailName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임"
+        android:layout_below="@+id/friendDetailName"
+        android:layout_marginTop="78dp"
+        android:layout_toRightOf="@+id/tvFriendDetailDrink"
+        android:layout_toEndOf="@+id/tvFriendDetailDrink" />
+
+    <TextView
+        android:id="@+id/friendDetailName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvFriendDetailDrink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="음주량"
+        android:layout_marginRight="93dp"
+        android:layout_marginEnd="93dp"
+        android:layout_marginBottom="8dp"
+        android:layout_alignBottom="@+id/tvFriendDetailName"
+        android:layout_toLeftOf="@+id/btFriendDetailLight"
+        android:layout_toStartOf="@+id/btFriendDetailLight" />
+
+    <TextView
+        android:id="@+id/friendDetailDrink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tvFriendDetailLight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="전구 색" />
+
+    <Button
+        android:id="@+id/btFriendDetailLight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="62dp"
+        android:layout_marginEnd="62dp"
+        android:layout_marginBottom="179dp" />
+
+
+</RelativeLayout>

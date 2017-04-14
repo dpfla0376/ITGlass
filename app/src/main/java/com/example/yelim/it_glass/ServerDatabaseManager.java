@@ -28,12 +28,10 @@ public class ServerDatabaseManager {
     private static Object value;
     private static String userID;
     private static int flag = 0;
-    //private static ArrayList<> = new ArrayList<>();
     private static List<Friend> friendList = new ArrayList<Friend>();
     private static ArrayList<String> tempFriendDrink = new ArrayList<String>();
     private static Callback callback;
     private static Callback innerCallback;
-    private static Callback callback3;
     //private ArrayAdapter<String> mAdapter;
 
     ServerDatabaseManager() {
@@ -263,19 +261,6 @@ public class ServerDatabaseManager {
         for (Map.Entry<String, String> entry : friends.entrySet()){
             mDatabaseReference.child(entry.getKey()).child("drink").addChildEventListener(myEventListener(entry.getKey(), entry.getValue()));
             friendList.add(new Friend(entry.getKey(), entry.getValue()));
-            /*final String tempFriendID = entry.getKey();
-            final String tempFriendLight = entry.getValue();
-            getFriendDrinkAmount(entry.getKey());
-            Callback inCallBack = new Callback(){
-                @Override
-                public void callBackMethod() {
-                    Log.d("ServerDatabaseManager", "---------------in callBackMethod");
-                    friendList.add(new Friend(tempFriendID, tempFriendDrink + "잔", tempFriendLight));
-                    //innerCallback.callBackMethod();
-                }
-
-            };
-            ServerDatabaseManager.setInnerCallBack(inCallBack);*/
         }
     }
 
@@ -367,6 +352,4 @@ public class ServerDatabaseManager {
     }
 
     public static void setInnerCallBack(Callback callback) { innerCallback = callback; }
-
-    public static void setCallback3(Callback callback) { callback3 = callback; }
 }

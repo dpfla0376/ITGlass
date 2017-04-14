@@ -17,7 +17,6 @@ public class Friend {
     private String fID;
     private String fLight;
     private String fDrink;
-    //public Map<String, Boolean> stars = new HashMap<>();
 
     public Friend() {
 

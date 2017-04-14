@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/friend_id"
@@ -9,7 +9,8 @@
         android:layout_height="20dp"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"/>
+        android:layout_marginRight="5dp"
+        android:textSize="15dp"/>
 
     <TextView
         android:id="@+id/friend_drink"
@@ -17,7 +18,8 @@
         android:layout_height="20dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"/>
+        android:layout_marginRight="5dp"
+        android:textSize="15dp"/>
 
     <TextView
         android:id="@+id/friend_light"
@@ -25,6 +27,7 @@
         android:layout_height="20dp"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"/>
+        android:layout_marginRight="5dp"
+        android:textSize="15dp"/>
 
 </RelativeLayout>
