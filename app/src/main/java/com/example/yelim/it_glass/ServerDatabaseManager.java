@@ -27,9 +27,11 @@ public class ServerDatabaseManager {
     private static ChildEventListener mChildEventListener;
     private static Object value;
     private static String userID;
-    //private static ArrayList<> = new ArrayList<>();
+    private static int flag = 0;
     private static List<Friend> friendList = new ArrayList<Friend>();
+    private static ArrayList<String> tempFriendDrink = new ArrayList<String>();
     private static Callback callback;
+    private static Callback innerCallback;
     //private ArrayAdapter<String> mAdapter;
 
     ServerDatabaseManager() {
@@ -82,7 +84,8 @@ public class ServerDatabaseManager {
         //access [ user_list ] line in firebase
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
 
-        mDatabaseReference.child(userID).child("drink").setValue(0);
+        mDatabaseReference.child(userID).child("drink").child("amount").setValue("0");
+        mDatabaseReference.child(userID).child("drink").child("timing").setValue(0);
         mDatabaseReference.child(userID).child("friend_list").setValue(null);
     }
 
@@ -175,7 +178,7 @@ public class ServerDatabaseManager {
 
     /**
      * 현재 기기의 userID의 friendList를 받아옴
-     * @return
+     * @return List<Friend> friendList
      */
     public static List<Friend> getFriendList() {
         return friendList;
@@ -261,43 +264,83 @@ public class ServerDatabaseManager {
         }
     }
 
-    public static void addListenerToFriends() {
-        if(friendList != null) {
-
-        }
-    }
-
-    public static void initServerDatabase() {
-        //mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mDatabaseReference = mFirebaseDatabase.getReference("message");
-        mChildEventListener = new ChildEventListener() {
+    public static void getFriendDrinkAmount(final String friendID) {
+        mDatabaseReference.child(friendID).child("drink").child("amount").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String message = dataSnapshot.getValue(String.class);
-                //mAdapter.add(message);
-            }
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                String message = dataSnapshot.getValue(String.class);
-                //mAdapter.remove(message);
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                Log.d("SERVER_DBM", "-------FriendDrinkValueEvent");
+                tempFriendDrink.add(dataSnapshot.getValue(String.class));
+                Log.d("SERVER_DBM", "-------" + friendID + " : " + tempFriendDrink + "잔");
+                flag++;
+                innerCallback.callBackMethod();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
+        });
+    }
 
-        };
-        mDatabaseReference.addChildEventListener(mChildEventListener);
+    /**
+     * 서버에서 사용자의 친구들의 음주량을 받아와 tempFriendDrink 리스트(=buffer)에 저장.
+     */
+    public static void getFriendListDrinkAmount() {
+        for(int i=0; i<ServerDatabaseManager.getFriendList().size(); i++) {
+            final int j = i;
+            ServerDatabaseManager.getFriendDrinkAmount(friendList.get(i).getfID());
+            Callback inCallBack = new Callback() {
+                @Override
+                public void callBackMethod() {
+                    Log.d("ServerDatabaseManager", "---------------in callBackMethod");
+                }
+
+            };
+
+            ServerDatabaseManager.setInnerCallBack(inCallBack);
+        }
+    }
+
+    /**
+     * tempFriendDrink 버퍼의 값을 실제 friendList에 복사.
+     */
+    public static void setFriendListDrinkAmount() {
+        for(int i=0; i<ServerDatabaseManager.getFriendList().size(); i++) {
+            friendList.get(i).setfDrink(tempFriendDrink.get(i));
+        }
+    }
+
+    public static int getFlag() {
+        return flag;
+    }
+
+    public static void setFlag(int f) {
+        flag = f;
+    }
+
+    public static ArrayList<String> getTempFriendDrink() {
+        return tempFriendDrink;
+    }
+
+    public static String getTempFriendDrink(int position) {
+        return tempFriendDrink.get(position);
+    }
+
+    public static void clearTempFriendDrink() {
+        tempFriendDrink.clear();
+    }
+
+    public static void turnOnDrinkTiming() {
+        // 술을 마신다 로 변경
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+        mDatabaseReference.child(userID).child("drink").child("timing").setValue(1);
+    }
+
+    public static void turnOffDrinkTiming() {
+        // 술을 안마신다 로 변경
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+        mDatabaseReference.child(userID).child("drink").child("timing").setValue(0);
     }
 
     /**
@@ -307,4 +350,6 @@ public class ServerDatabaseManager {
     public static void setCallBack(Callback callBack) {
         callback = callBack;
     }
+
+    public static void setInnerCallBack(Callback callback) { innerCallback = callback; }
 }

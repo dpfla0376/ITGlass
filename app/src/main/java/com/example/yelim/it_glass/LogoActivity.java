@@ -53,6 +53,5 @@ public class LogoActivity extends AppCompatActivity {
 
     private void setting() {
         ServerDatabaseManager.setLocalUserID(dbManager.getLocalUserName());
-        // 사용자 친구들의 drink에 listener 달기..!
     }
 }
