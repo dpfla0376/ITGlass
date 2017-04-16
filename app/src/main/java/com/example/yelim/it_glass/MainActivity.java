@@ -98,6 +98,11 @@ public class MainActivity extends AppCompatActivity {
                 };
                 t.start();
             }
+
+            @Override
+            public void callBackMethod(boolean value) {
+
+            }
         };
         ServerDatabaseManager.setCallBack(callBack);
 
