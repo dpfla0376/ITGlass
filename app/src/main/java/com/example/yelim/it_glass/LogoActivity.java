@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import butterknife.BindView;
+
 public class LogoActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_MAIN = 1001;
@@ -50,7 +52,7 @@ public class LogoActivity extends AppCompatActivity {
             }
         }, 2000);
     }
-
+    
     private void setting() {
         ServerDatabaseManager.setLocalUserID(dbManager.getLocalUserName());
     }
