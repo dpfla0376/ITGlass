@@ -33,22 +33,22 @@ public class BluetoothManager {
     static final int CONNECTED = 100;
     static final int MESSAGE = 200;
 
-    private BluetoothAdapter myBluetoothAdapter;
-    private Set<BluetoothDevice> deviceList;
-    private BluetoothDevice myDevice;
-    private BluetoothSocket mySocket = null;
+    private static BluetoothAdapter myBluetoothAdapter;
+    private static Set<BluetoothDevice> deviceList;
+    private static BluetoothDevice myDevice;
+    private static BluetoothSocket mySocket = null;
 
-    private OutputStream toDeviceStream = null;
-    private InputStream fromDeviceStream = null;
+    private static OutputStream toDeviceStream = null;
+    private static InputStream fromDeviceStream = null;
 
-    private Thread thread = null;
-    private Handler handler;
+    private static Thread thread = null;
+    private static Handler handler;
 
-    private Context context;
+    public static Context context;
+    public static CallBack callBack;
 
-    private CallBack callBack;
-    private boolean isReady = false;
-    private ArrayList<String>  waitingTask;
+    private static boolean isReady = false;
+    private static ArrayList<String>  waitingTask;
 
     /**
      * int howMany : 사용자가 마신 술의 양
@@ -64,7 +64,10 @@ public class BluetoothManager {
      * return : 블루투스 미지원일 때 -1, 활성 상태가 아닐때 0, 활성 상태일때 1.
      * 블루투스가 활성 상태일때 '장치 선택(selectDevice())'이 실행됨
      */
-    int checkBluetooth() {
+    static int checkBluetooth() {
+
+        // 이거 어디에 해야되는지 몰라서 일단 여기에 적엇어여..
+        waitingTask = new ArrayList<>();
 
         Log.d("Bluetooth", "Let's checking bluetooth state");
         myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -88,7 +91,7 @@ public class BluetoothManager {
      * return : 장치가 없는 경우 -1, 아닌 경우 0
      * 장치를 선택한 경우 connectToMyDevice(String deviceName) 실행하여 연결시도.
      */
-    private void selectDevice() {
+    private static void selectDevice() {
         deviceList = myBluetoothAdapter.getBondedDevices(); // 페어링된 장치 목록
 
         if (deviceList.size() == 0) { // 없는 경우
@@ -130,7 +133,7 @@ public class BluetoothManager {
      * myDeviceName 장치에 연결한다.
      * 소켓 i/o, 쓰레드를 이용해 데이터를 송수신한다.
      */
-    private int connectToMyDevice(String myDeviceName) {
+    private static int connectToMyDevice(String myDeviceName) {
 
         Log.d("Bluetooth", "OK, Let's connect to your device");
         myDevice = getMyDeviceFromList(myDeviceName);
@@ -164,7 +167,8 @@ public class BluetoothManager {
         }
     }
 
-    private void listenData() {
+    private static void listenData() {
+        Log.d("-----BT-----", "I'm listening");
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -209,7 +213,7 @@ public class BluetoothManager {
     }
 
     // 블루투스 장치 이름을 가지고, 블루투스 장치 객체를 리턴
-    private BluetoothDevice getMyDeviceFromList(String myDeviceName) {
+    private static BluetoothDevice getMyDeviceFromList(String myDeviceName) {
         BluetoothDevice selectedDevice = null;
         // 찾은 디바이스 처음부터 끝까지
         for (BluetoothDevice device : deviceList) {
@@ -221,7 +225,8 @@ public class BluetoothManager {
         return selectedDevice;
     }
 
-    public void writeData(String toDeviceString) {
+    public static void writeData(String toDeviceString) {
+        Log.d("BLUETOOTH", "IN write data to my device");
         if (isReady) {
             while(waitingTask.size()>0)
             {
@@ -233,6 +238,7 @@ public class BluetoothManager {
                 waitingTask.remove(0);
             }
             try {
+                Log.d("BLUETOOTH", "trying write data to my device");
                 toDeviceStream.write(toDeviceString.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -247,8 +253,12 @@ public class BluetoothManager {
     public interface CallBack {
         void callBackMethod(int flag, String fromDeviceMessage);
     }
-
-    public void setCallBack(CallBack callBack) {
-        this.callBack = callBack;
+    public static void setContext(Context context){
+        BluetoothManager.context = context;
     }
+
+    public static void setCallBack(CallBack callBack) {
+        BluetoothManager.callBack= callBack;
+    }
+
 }

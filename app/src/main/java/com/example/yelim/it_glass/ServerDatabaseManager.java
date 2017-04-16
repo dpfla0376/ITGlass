@@ -222,6 +222,8 @@ public class ServerDatabaseManager {
                 // 술을 마시는 모션
                 if(dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 1) {
                     Log.d("SERVER_DBM", "------- event from " + friendID + " / light " + light + " / drinking");
+
+                    BluetoothManager.writeData(light);
                 }
                 // 모션 끝. 다시 원상태로 복귀.
                 else if(dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 0) {
@@ -258,9 +260,11 @@ public class ServerDatabaseManager {
     private static void collectFriends(Map<String,String> friends) {
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
         friendList.clear();
-        for (Map.Entry<String, String> entry : friends.entrySet()){
-            mDatabaseReference.child(entry.getKey()).child("drink").addChildEventListener(myEventListener(entry.getKey(), entry.getValue()));
-            friendList.add(new Friend(entry.getKey(), entry.getValue()));
+        if(friends != null) {
+            for (Map.Entry<String, String> entry : friends.entrySet()) {
+                mDatabaseReference.child(entry.getKey()).child("drink").addChildEventListener(myEventListener(entry.getKey(), entry.getValue()));
+                friendList.add(new Friend(entry.getKey(), entry.getValue()));
+            }
         }
     }
 

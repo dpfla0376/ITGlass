@@ -104,6 +104,7 @@ public class ItemFriendListAdapter extends BaseAdapter {
             public void onClick(View v) {
                 //friend detail view with dialog (context.startActivityForResult 써야하는지 그냥 Activity써도 되는지...)
                 Intent intent = new Intent(v.getContext(), FriendListDetailActivity.class);
+                intent.putExtra("LAYOUT_TYPE", "DETAIL");
                 context.startActivity(intent);
 
             }
