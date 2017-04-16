@@ -32,6 +32,7 @@ public class ServerDatabaseManager {
     private static ArrayList<String> tempFriendDrink = new ArrayList<String>();
     private static Callback callback;
     private static Callback innerCallback;
+    private static Callback hasIDCallback;
     //private ArrayAdapter<String> mAdapter;
 
     ServerDatabaseManager() {
@@ -43,13 +44,13 @@ public class ServerDatabaseManager {
      * 유저 등록 시 중복 검사 & 친구 등록 시 존재 여부 확인
      * 등록 : true
      * 비등록 : false
+     *
      * @param ID
      * @return
      */
-    public static boolean hasID(String ID) {
+    public static void hasID(String ID) {
 
         //access [ user_list ] line in firebase
-        //mFirebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
 
         //access to value of which key = ID in user_list of firebase
@@ -57,6 +58,9 @@ public class ServerDatabaseManager {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 value = dataSnapshot.getValue(Object.class);
+                if(value == null) hasIDCallback.callBackMethod(false);
+                else hasIDCallback.callBackMethod(true);
+
             }
 
             @Override
@@ -64,20 +68,11 @@ public class ServerDatabaseManager {
 
             }
         });
-
-        //there is no data has key = ID
-        if(value == null) {
-            return false;
-        }
-        //key = ID data is already in firebase
-        else {
-            return true;
-        }
-
     }
 
     /**
      * 입력받은 userID를 user로 서버에 등록
+     *
      * @param userID
      */
     public static void saveUserID(String userID) {
@@ -91,6 +86,7 @@ public class ServerDatabaseManager {
 
     /**
      * 현재 기기의 userID를 저장
+     *
      * @param ID
      */
     public static void setLocalUserID(String ID) {
@@ -99,6 +95,7 @@ public class ServerDatabaseManager {
 
     /**
      * 현재 기기의 userID를 반환
+     *
      * @return
      */
     public static String getLocalUserID() {
@@ -108,27 +105,40 @@ public class ServerDatabaseManager {
     /**
      * userID의 친구로 friendID를 추가
      * light값이 없으므로 default값 255/255/255 로 저장됨
+     *
      * @param userID
      * @param friendID
      * @return
      */
-    public static boolean addFriend(String userID, String friendID) {
-        if(hasID(friendID)) {
-            //access [ friend_list ] line in firebase
-            mDatabaseReference = mFirebaseDatabase.getReference("user_list");
-            mDatabaseReference.child(userID).child("friend_list").child(friendID).setValue("255.255.255");
-            return true;
-        }
-        //there is no friendID
-        else {
-            Log.e("ADD_FRIEND_FIREBASE", "-------failed-------");
-            return false;
-        }
+    public static void addFriend(final String userID, final String friendID) {
+        hasID(friendID);
+        hasIDCallback = new Callback() {
+            @Override
+            public void callBackMethod() {
+
+            }
+
+            @Override
+            public void callBackMethod(boolean value) {
+                if (value) {
+                    //access [ friend_list ] line in firebase
+                    mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+                    mDatabaseReference.child(userID).child("friend_list").child(friendID).setValue("255.255.255");
+                }
+                //there is no friendID
+                else {
+                    Log.e("ADD_FRIEND_FIREBASE", "-------friendID not user-------");
+                }
+            }
+        };
+        hasIDCallback.callBackMethod();
+
     }
 
     /**
      * userID의 친구로 friendID를 추가
      * light값은 R/G/B 로 저장됨
+     *
      * @param userID
      * @param friendID
      * @param R
@@ -136,22 +146,33 @@ public class ServerDatabaseManager {
      * @param B
      * @return
      */
-    public static boolean addFriend(String userID, String friendID, int R, int G, int B) {
-        if(hasID(friendID)) {
-            //access [ friend_list ] line in firebase
-            mDatabaseReference = mFirebaseDatabase.getReference("user_list");
-            mDatabaseReference.child(userID).child("friend_list").child(friendID).setValue(R + "." + G + "." + B + "");
-            return true;
-        }
-        //there is no friendID
-        else {
-            Log.e("ADD_FRIEND_FIREBASE", "-------friendID not user-------");
-            return false;
-        }
+    public static void addFriend(final String userID, final String friendID, final int R, final int G, final int B) {
+        hasID(friendID);
+        hasIDCallback = new Callback() {
+            @Override
+            public void callBackMethod() {
+
+            }
+
+            @Override
+            public void callBackMethod(boolean value) {
+                if (value) {
+                    //access [ friend_list ] line in firebase
+                    mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+                    mDatabaseReference.child(userID).child("friend_list").child(friendID).setValue(R + "." + G + "." + B + "");
+                }
+                //there is no friendID
+                else {
+                    Log.e("ADD_FRIEND_FIREBASE", "-------friendID not user-------");
+                }
+            }
+        };
+        hasIDCallback.callBackMethod();
     }
 
     /**
      * userID의 친구 중 friendID를 삭제
+     *
      * @param userID
      * @param friendID
      */
@@ -164,6 +185,7 @@ public class ServerDatabaseManager {
 
     /**
      * userID의 친구 중 friendID의 light값을 R/G/B 로 변경
+     *
      * @param userID
      * @param friendID
      * @param R
@@ -172,12 +194,13 @@ public class ServerDatabaseManager {
      */
     public static void changeLightColor(String userID, String friendID, int R, int G, int B) {
         //deleteFriend(userID, friendID);
-        addFriend(userID, friendID, R, G ,B);
+        addFriend(userID, friendID, R, G, B);
 
     }
 
     /**
      * 현재 기기의 userID의 friendList를 받아옴
+     *
      * @return List<Friend> friendList
      */
     public static List<Friend> getFriendList() {
@@ -186,28 +209,34 @@ public class ServerDatabaseManager {
 
     /**
      * 현재 기기의 userID의 friend 전부를 서버에서 받아와 friendList에 저장
+     *
      * @param userID
      */
     public static void getFriend(String userID) {
         Log.d("SERVER_DBM", "In GetFriend Method");
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
         Log.d("SERVER_DBM", "GetReferenceSuccessful");
-        mDatabaseReference.child(userID).child("friend_list").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        //Log.d("SERVER_DBM", mDatabaseReference.child(userID).getKey().toString());
+        //Log.d("SERVER_DBM", mDatabaseReference.child("Hayley").getKey().toString());
+        if (mDatabaseReference.child(userID).child("friend_list").getKey()!=null) {
+            mDatabaseReference.child(userID).child("friend_list").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Log.d("SERVER_DBM", "-------ValueEvent");
-                Log.d("SERVER_DBM", "FriendListSize : " + dataSnapshot.getChildrenCount());
-                collectFriends((Map<String,String>) dataSnapshot.getValue());
-                for(int i=0; i<friendList.size(); i++) Log.d("FRIEND_LIST", friendList.get(i).getfID() + ":" + friendList.get(i).getfLight());
-                callback.callBackMethod();
-            }
+                    Log.d("SERVER_DBM", "-------ValueEvent");
+                    Log.d("SERVER_DBM", "FriendListSize : " + dataSnapshot.getChildrenCount());
+                    collectFriends((Map<String, String>) dataSnapshot.getValue());
+                    for (int i = 0; i < friendList.size(); i++)
+                        Log.d("FRIEND_LIST", friendList.get(i).getfID() + ":" + friendList.get(i).getfLight());
+                    callback.callBackMethod();
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     private static ChildEventListener myEventListener(final String friendID, final String light) {
@@ -220,14 +249,15 @@ public class ServerDatabaseManager {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 // 술을 마시는 모션
-                if(dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 1) {
+                if (dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 1) {
                     Log.d("SERVER_DBM", "------- event from " + friendID + " / light " + light + " / drinking");
+
+                    BluetoothManager.writeData(light);
                 }
                 // 모션 끝. 다시 원상태로 복귀.
-                else if(dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 0) {
+                else if (dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 0) {
                     Log.d("SERVER_DBM", "------- event from " + friendID + " / light " + light + " / stop drinking");
-                }
-                else {
+                } else {
                     Log.e("SERVER_DBM", "------ " + friendID + " [ timing ] error");
                 }
             }
@@ -253,14 +283,17 @@ public class ServerDatabaseManager {
 
     /**
      * Firebase의 database에서 얻어온 data를 형식에 맞도록 조정
+     *
      * @param friends
      */
-    private static void collectFriends(Map<String,String> friends) {
+    private static void collectFriends(Map<String, String> friends) {
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
         friendList.clear();
-        for (Map.Entry<String, String> entry : friends.entrySet()){
-            mDatabaseReference.child(entry.getKey()).child("drink").addChildEventListener(myEventListener(entry.getKey(), entry.getValue()));
-            friendList.add(new Friend(entry.getKey(), entry.getValue()));
+        if (friends != null) {
+            for (Map.Entry<String, String> entry : friends.entrySet()) {
+                mDatabaseReference.child(entry.getKey()).child("drink").addChildEventListener(myEventListener(entry.getKey(), entry.getValue()));
+                friendList.add(new Friend(entry.getKey(), entry.getValue()));
+            }
         }
     }
 
@@ -287,7 +320,7 @@ public class ServerDatabaseManager {
      * 서버에서 사용자의 친구들의 음주량을 받아와 tempFriendDrink 리스트(=buffer)에 저장.
      */
     public static void getFriendListDrinkAmount() {
-        for(int i=0; i<ServerDatabaseManager.getFriendList().size(); i++) {
+        for (int i = 0; i < ServerDatabaseManager.getFriendList().size(); i++) {
             final int j = i;
             ServerDatabaseManager.getFriendDrinkAmount(friendList.get(i).getfID());
             Callback inCallBack = new Callback() {
@@ -295,6 +328,12 @@ public class ServerDatabaseManager {
                 public void callBackMethod() {
                     Log.d("ServerDatabaseManager", "---------------in callBackMethod");
                 }
+
+                @Override
+                public void callBackMethod(boolean value) {
+
+                }
+
 
             };
 
@@ -306,7 +345,7 @@ public class ServerDatabaseManager {
      * tempFriendDrink 버퍼의 값을 실제 friendList에 복사.
      */
     public static void setFriendListDrinkAmount() {
-        for(int i=0; i<ServerDatabaseManager.getFriendList().size(); i++) {
+        for (int i = 0; i < ServerDatabaseManager.getFriendList().size(); i++) {
             friendList.get(i).setfDrink(tempFriendDrink.get(i));
         }
     }
@@ -345,11 +384,21 @@ public class ServerDatabaseManager {
 
     /**
      * Firebase의 Realtime Database에서 값을 얻어올 때 asynchronous 하므로 callback을 이용
+     *
      * @param callBack
      */
     public static void setCallBack(Callback callBack) {
         callback = callBack;
     }
 
-    public static void setInnerCallBack(Callback callback) { innerCallback = callback; }
+    public static void setInnerCallBack(Callback callback) {
+        innerCallback = callback;
+    }
+
+    public static void sethasIDCallback(Callback callback) {
+        hasIDCallback = callback;
+    }
+    public static Callback gethasIDCallback() {
+        return hasIDCallback;
+    }
 }

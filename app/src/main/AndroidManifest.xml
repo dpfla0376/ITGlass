@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity"/>
+        <activity android:name=".FriendListDetailActivity" android:theme="@style/Theme.AppCompat.Dialog"/>
 
         <service android:name=".ItGlassFirebaseMessagingService">
             <intent-filter>

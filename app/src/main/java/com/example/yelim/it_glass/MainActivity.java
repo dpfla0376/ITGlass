@@ -1,5 +1,6 @@
 package com.example.yelim.it_glass;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -10,17 +11,15 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
+
+    final static int REQUEST_CODE_MAIN = 2000;
 
     final DatabaseManager dbManager = new DatabaseManager(MainActivity.this, DatabaseManager.DB_NAME + ".db", null, 1);
     private BluetoothManager btManager;
     static int howMany;
     ListView friendListView;
+    Button btFriendAdd;
     ItemFriendListAdapter friendListAdapter;
 
     @Override
@@ -29,16 +28,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d("DATABASE", "---------" + dbManager.getDatabasePath() + "---------");
 
+        btFriendAdd = (Button) findViewById(R.id.btFriendAdd);
+        btFriendAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), FriendListDetailActivity.class);
+                intent.putExtra("LAYOUT_TYPE", "ADD");
+                startActivityForResult(intent, REQUEST_CODE_MAIN);
+            }
+        });
 
         friendListView = (ListView) findViewById(R.id.friend_list);
-        ServerDatabaseManager.getFriend("한");
-        //ServerDatabaseManager.getFriend(ServerDatabaseManager.getLocalUserID());
+        //ServerDatabaseManager.getFriend("한");
+        ServerDatabaseManager.getFriend(ServerDatabaseManager.getLocalUserID());
         Log.d("MainActivity", "---------------out of getFriend");
         Callback callBack = new Callback() {
             @Override
             public void callBackMethod() {
                 Log.d("MainActivity", "---------------in callBackMethod");
-                //ServerDatabaseManager.getFriend(LocalUserID);
                 Log.d("MainActivity", "---------------FriendListSize : " + ServerDatabaseManager.getFriendList().size());
                 if (ServerDatabaseManager.getFriendList().size() > 0) {
                     Log.d("MainActivity", "---------------in callBackMethod [ if ]");
@@ -91,12 +98,17 @@ public class MainActivity extends AppCompatActivity {
                 };
                 t.start();
             }
-        };
+                @Override
+                public void callBackMethod(boolean value) {
+
+                }
+            };
         ServerDatabaseManager.setCallBack(callBack);
 
-        howMany=0;
-        setBtManager();
-    }
+            howMany = 0;
+            setBtManager();
+
+        }
 
     void makeFriendListView() {
         for (int i = 0; i < ServerDatabaseManager.getFriendList().size(); i++) {
@@ -117,7 +129,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void setBtManager(){
-        btManager=new BluetoothManager(this);
+        //btManager=new BluetoothManager(this);
+
+        BluetoothManager.setContext(this);
+        BluetoothManager.checkBluetooth();
 
         BluetoothManager.CallBack callBack = new BluetoothManager.CallBack() {
             @Override
@@ -129,14 +144,22 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("Bluetooth","DEVICE IS CONNECTED");
                         break;
                     case 200 :
-                        Log.d("Bluetooth","NEW MESSAGE FROM YOUR DEVICE : "+fromDeviceMessage);
+                        // 술을 마신다
+                        if(fromDeviceMessage.equals("drink")){
+                            ServerDatabaseManager.turnOnDrinkTiming();
+                            Log.d("Bluetooth","NEW MESSAGE FROM YOUR DEVICE : "+fromDeviceMessage);}
+
+                        // 다 마셨다
+                        if(fromDeviceMessage.equals("drank")){
+                            ServerDatabaseManager.turnOffDrinkTiming();
+                            Log.d("Bluetooth","NEW MESSAGE FROM YOUR DEVICE : "+fromDeviceMessage);}
+
                         break;
                 }
             }
         };
-        btManager.setCallBack(callBack);
-
-
+        BluetoothManager.setCallBack(callBack);
     }
+    
 
 }
