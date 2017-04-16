@@ -36,7 +36,6 @@ public class FriendListDetailActivity extends Activity {
     Button btLight;
     String type;
     Context context;
-    int tempColor;
     int selectedColorR;
     int selectedColorG;
     int selectedColorB;
@@ -84,8 +83,19 @@ public class FriendListDetailActivity extends Activity {
             btFriendAddOk.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(ServerDatabaseManager.hasID(friendNameAdd.getText().toString())) {
-                        Log.d("FRIEND_DETAIL_ERROR", "---------FRIEND IS IN SERVER" + "/ ID = " + friendNameAdd.getText().toString());
+                    String temp = friendNameAdd.getText().toString();
+                    if(ServerDatabaseManager.hasID(temp)) {
+                        Log.d("FRIEND_DETAIL", "---------FRIEND IS IN SERVER" + "/ ID = " + friendNameAdd.getText().toString());
+                        new AlertDialog.Builder(context)
+                                .setTitle("Good!")
+                                .setMessage("You enter " + temp + " as your friend!")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .show();
                     }
                     else {
                         Log.e("FRIEND_DETAIL_ERROR", "---------FRIEND NOT IN SERVER" + "/ ID = " + friendNameAdd.getText().toString());
@@ -114,7 +124,6 @@ public class FriendListDetailActivity extends Activity {
                 @Override
                 public void onColorChosen(@ColorInt int color) {
                     // Do whatever you want
-                    tempColor = color;
                     selectedColorR = cp.getRed();
                     selectedColorG = cp.getGreen();
                     selectedColorB = cp.getBlue();
