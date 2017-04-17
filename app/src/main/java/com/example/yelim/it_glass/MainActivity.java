@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         BluetoothManager.CallBack callBack = new BluetoothManager.CallBack() {
             @Override
             public void callBackMethod(int flag, String fromDeviceMessage) {
-                Log.d("Bluetooth","I'm MainActivity. I got your message : "+fromDeviceMessage);
+                Log.d("Bluetooth","I'm MainActivity. I got your message : "+fromDeviceMessage.toString());
 
                 switch(flag){
                     case 100 :
@@ -145,14 +145,14 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 200 :
                         // 술을 마신다
-                        if(fromDeviceMessage.equals("drink")){
+                        if(fromDeviceMessage.toString().equals("drink")){
                             ServerDatabaseManager.turnOnDrinkTiming();
-                            Log.d("Bluetooth","NEW MESSAGE FROM YOUR DEVICE : "+fromDeviceMessage);}
+                            Log.d("Bluetooth","NEW MESSAGE FROM YOUR DEVICE : "+fromDeviceMessage.toString());}
 
                         // 다 마셨다
-                        if(fromDeviceMessage.equals("drank")){
+                        if(fromDeviceMessage.toString().equals("drank")){
                             ServerDatabaseManager.turnOffDrinkTiming();
-                            Log.d("Bluetooth","NEW MESSAGE FROM YOUR DEVICE : "+fromDeviceMessage);}
+                            Log.d("Bluetooth","NEW MESSAGE FROM YOUR DEVICE : "+fromDeviceMessage.toString());}
 
                         break;
                 }
@@ -160,6 +160,5 @@ public class MainActivity extends AppCompatActivity {
         };
         BluetoothManager.setCallBack(callBack);
     }
-    
 
 }
