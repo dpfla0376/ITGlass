@@ -3,31 +3,52 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <RelativeLayout
+        android:id="@+id/loFriendInfo"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true">
     <TextView
         android:id="@+id/friend_id"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:textSize="15dp"/>
+        android:textSize="15dp"
+        android:layout_centerVertical="true"/>
 
     <TextView
         android:id="@+id/friend_drink"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:textSize="15dp"/>
+        android:textSize="15dp"
+        android:layout_centerVertical="true"/>
 
     <TextView
         android:id="@+id/friend_light"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:textSize="15dp"/>
-
+        android:textSize="15dp"
+        android:layout_centerVertical="true"/>
+    </RelativeLayout>
+    <Button
+        android:id="@+id/btFriendDelete"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:text="X"
+        android:textSize="15dp"
+        android:layout_toRightOf="@+id/loFriendInfo"
+        android:layout_toEndOf="@+id/loFriendInfo"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"/>
 </RelativeLayout>

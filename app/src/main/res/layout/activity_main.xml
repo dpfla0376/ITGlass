@@ -4,42 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.yelim.it_glass.MainActivity">
+    tools:context="com.example.yelim.it_glass.MainActivity"
+    android:padding="10dp">
 
-    <TextView
-        android:id="@+id/textView2"
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="MainActivity" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="MainActivity" />
+        android:layout_above="@+id/friend_list">
+        <TextView
+            android:id="@+id/tvFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/friend_list"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/btFriendAdd"
+            android:layout_toStartOf="@+id/btFriendAdd"
+            android:text="친구목록" />
 
-    <TextView
-        android:id="@+id/tvFriend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:text="친구목록"
-        android:layout_above="@+id/friend_list"
-        android:layout_toLeftOf="@+id/btFriendAdd"
-        android:layout_toStartOf="@+id/btFriendAdd"/>
-
-    <Button
-        android:id="@+id/btFriendAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="+"
-        android:textSize="10dp"
-        android:layout_above="@+id/friend_list" />
+        <Button
+            android:id="@+id/btFriendAdd"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:text="+"
+            android:textSize="10dp" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/friend_list"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 </RelativeLayout>
