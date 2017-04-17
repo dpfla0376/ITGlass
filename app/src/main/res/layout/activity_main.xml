@@ -8,12 +8,26 @@
     tools:context="com.example.yelim.it_glass.MainActivity">
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:id="@+id/mainTextView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="MainActivity" />
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:text="IT잔"
+        android:textAlignment="center"
+        android:textColor="#008cff"
+        android:textSize="40dp" />
+
+    <ImageView
+        android:id="@+id/main_underline"
+        android:layout_below="@+id/mainTextView"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/underline" />
 
     <TextView
         android:id="@+id/tvFriend"
@@ -21,18 +35,22 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:text="친구목록"
+        android:textColor="#008cff"
+        android:textSize="20sp"
         android:layout_above="@+id/friend_list"
-        android:layout_toLeftOf="@+id/btFriendAdd"
-        android:layout_toStartOf="@+id/btFriendAdd"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/btFriendAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="+"
-        android:textSize="10dp"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_toRightOf="@id/tvFriend"
         android:background="@drawable/plus_icon"
-        android:layout_above="@+id/friend_list" />
+        android:layout_marginBottom="5dp"
+        android:layout_above="@+id/friend_list"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp" />
 
     <ListView
         android:id="@+id/friend_list"

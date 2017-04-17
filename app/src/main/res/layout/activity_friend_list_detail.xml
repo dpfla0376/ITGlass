@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#000000"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -13,17 +13,22 @@
 
         <LinearLayout
             android:id="@+id/lofriendName"
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/tvFriendDetailName"
-                android:text="닉네임"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@+id/friendDetailName"
+                android:layout_marginEnd="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginStart="15dp"
                 android:layout_toLeftOf="@+id/friendDetailName"
-                android:layout_toStartOf="@+id/friendDetailName" />
+                android:layout_toStartOf="@+id/friendDetailName"
+                android:text="닉네임" />
 
             <TextView
                 android:id="@+id/friendDetailName"
@@ -32,17 +37,19 @@
 
             <EditText
                 android:id="@+id/friendNameAdd"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/friendDetailName"
-                android:layout_toEndOf="@+id/friendDetailName"
+                android:textSize="15dp"
                 android:hint="친구ID를 입력하세요."/>
             <Button
                 android:id="@+id/btFriendAddOk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/friendNameAdd"
-                android:text="확인"/>
+                android:layout_width="30dp"
+                android:layout_height="22dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/white_check_icon" />
         </LinearLayout>
 
 
@@ -77,32 +84,42 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@+id/btFriendDetailLight"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
                 android:layout_toLeftOf="@+id/btFriendDetailLight"
                 android:layout_toStartOf="@+id/btFriendDetailLight"
                 android:text="전구 색" />
 
             <Button
                 android:id="@+id/btFriendDetailLight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CHANGE" />
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/white_plus_icon"/>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/lofriendLight"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp">
+
             <Button
                 android:id="@+id/btFriendSave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="저장"/>
-        <Button
-            android:id="@+id/btFriendAddCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="취소"/>
+                android:layout_width="30dp"
+                android:layout_height="22dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/white_check_icon" />
+
+            <Button
+                android:id="@+id/btFriendAddCancel"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:background="@drawable/x_icon" />
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>
