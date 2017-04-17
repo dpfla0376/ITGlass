@@ -222,7 +222,6 @@ public class ServerDatabaseManager {
                 // 술을 마시는 모션
                 if(dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 1) {
                     Log.d("SERVER_DBM", "------- event from " + friendID + " / light " + light + " / drinking");
-
                     BluetoothManager.writeData(light);
                 }
                 // 모션 끝. 다시 원상태로 복귀.

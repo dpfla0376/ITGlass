@@ -82,7 +82,7 @@ public class ItemFriendListAdapter extends BaseAdapter {
          */
         else {
             holder = (ItemHolder) convertView.getTag();
-            itemView = (ItemFriendView) convertView;
+            //itemView = (ItemFriendView) convertView;
         }
 
         itemFriend = getItem(position);

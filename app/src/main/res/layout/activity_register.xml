@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ABF0D1"
+    android:background="#ffffff"
     tools:context="com.example.yelim.it_glass.RegisterActivity">
 
     <TextView
@@ -15,7 +15,7 @@
         android:text="가입하기"
         android:textAlignment="center"
         android:layout_marginBottom="25dp"
-        android:textColor="#12221b"
+        android:textColor="#008cff"
         android:textSize="40dp" />
 
     <TextView
@@ -26,17 +26,8 @@
         android:layout_alignBottom="@+id/inputID"
         android:layout_toLeftOf="@+id/inputID"
         android:text="닉네임"
-        android:textColor="#12221b"
+        android:textColor="#008cff"
         android:textSize="15dp" />
-
-    <ImageView
-        android:id="@+id/underlineImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
-        android:layout_alignBottom="@+id/registerTextView"
-        android:background="@drawable/underline" />
 
     <EditText
         android:id="@+id/inputID"
@@ -58,5 +49,5 @@
         android:layout_alignParentRight="true"
         android:layout_marginEnd="17dp"
         android:layout_marginRight="17dp"
-        android:background="@drawable/next_button" />
+        android:background="@drawable/right_direction_icon" />
 </RelativeLayout>
