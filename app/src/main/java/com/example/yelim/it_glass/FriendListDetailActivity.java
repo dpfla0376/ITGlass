@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
@@ -38,12 +39,15 @@ public class FriendListDetailActivity extends Activity {
     Button btFriendSave;
     Button btFriendAddCancel;
 
-    String type;
+    String[] info;
     String inputFriendID = new String();
     Context context;
     int selectedColorR;
     int selectedColorG;
     int selectedColorB;
+    int previousColorR;
+    int previousColorG;
+    int previousColorB;
     boolean check;
 
     private static Callback callback;
@@ -59,24 +63,35 @@ public class FriendListDetailActivity extends Activity {
         btFriendAddOk = (Button) findViewById(R.id.btFriendAddOk);
         tvFriendDetailDrink = (TextView) findViewById(R.id.tvFriendDetailDrink);
         friendDetailDrink = (TextView) findViewById(R.id.friendDetailDrink);
-        cp = new ColorPicker(FriendListDetailActivity.this, 255, 255, 255);
+        //cp = new ColorPicker(FriendListDetailActivity.this, 255, 255, 255);
         tvFriendDetailLight = (TextView) findViewById(R.id.tvFriendDetailLight);
         btLight = (Button) findViewById(R.id.btFriendDetailLight);
         btFriendSave = (Button) findViewById(R.id.btFriendSave);
         btFriendAddCancel = (Button) findViewById(R.id.btFriendAddCancel);
 
         context = this;
-        type = getIntent().getStringExtra("LAYOUT_TYPE");
+        info = getIntent().getStringArrayExtra("LAYOUT_TYPE");
         selectedColorR = 255;
         selectedColorG = 255;
         selectedColorB = 255;
 
-        if(type.equals("DETAIL")) {
-            friendDetailName.setText("");
+        if(info[0].equals("DETAIL")) {
+            friendDetailName.setVisibility(View.VISIBLE);
+            friendDetailName.setText(info[1]);
             friendNameAdd.setVisibility(View.INVISIBLE);
             btFriendAddOk.setVisibility(View.INVISIBLE);
             tvFriendDetailDrink.setVisibility(View.VISIBLE);
             friendDetailDrink.setVisibility(View.VISIBLE);
+            friendDetailDrink.setText(info[2]);
+            tvFriendDetailLight.setVisibility(View.VISIBLE);
+            Log.d("FRIEND_DETAIL", info[3]);
+            String temp = info[3];
+            String[] tempC = temp.split("\\.");
+            Log.d("FRIEND_DETAIL", tempC.length+"");
+            previousColorR = Integer.parseInt(tempC[0]);
+            previousColorG = Integer.parseInt(tempC[1]);
+            previousColorB = Integer.parseInt(tempC[2]);
+            cp = new ColorPicker(FriendListDetailActivity.this, previousColorR, previousColorG, previousColorB);
 
             btLight.setOnClickListener(new OnClickListener() {
 
@@ -85,8 +100,42 @@ public class FriendListDetailActivity extends Activity {
                     cp.show();
                 }
             });
+
+            cp.setCallback(new ColorPickerCallback() {
+                @Override
+                public void onColorChosen(@ColorInt int color) {
+                    // Do whatever you want
+                    selectedColorR = cp.getRed();
+                    selectedColorG = cp.getGreen();
+                    selectedColorB = cp.getBlue();
+                    Log.d("COLOR_PICKER", "color : " + selectedColorR + "/" + selectedColorG + "/" + selectedColorB);
+
+                    cp.dismiss();
+                }
+            });
+
+            btFriendSave.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(selectedColorR != previousColorR || selectedColorG != previousColorG || selectedColorB != previousColorB) {
+                        Toast.makeText(FriendListDetailActivity.this, "Change color into "
+                                + selectedColorR + "." +  selectedColorG + "." + selectedColorB, Toast.LENGTH_SHORT).show();
+                        ServerDatabaseManager.changeLightColor(ServerDatabaseManager.getLocalUserID(), info[1],
+                                selectedColorR, selectedColorG, selectedColorB);
+                    }
+                    FriendListDetailActivity.this.finish();
+                }
+
+
+            });
+            btFriendAddCancel.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FriendListDetailActivity.this.finish();
+                }
+            });
         }
-        else if(type.equals("ADD")) {
+        else if(info[0].equals("ADD")) {
             friendDetailName.setVisibility(View.INVISIBLE);
             friendNameAdd.setVisibility(View.VISIBLE);
             btFriendAddOk.setVisibility(View.VISIBLE);
@@ -94,6 +143,7 @@ public class FriendListDetailActivity extends Activity {
             friendDetailDrink.setVisibility(View.INVISIBLE);
             tvFriendDetailLight.setVisibility(View.VISIBLE);
             check = false;
+            cp = new ColorPicker(FriendListDetailActivity.this, 255, 255, 255);
 
             btFriendAddOk.setOnClickListener(new OnClickListener() {
                 @Override
