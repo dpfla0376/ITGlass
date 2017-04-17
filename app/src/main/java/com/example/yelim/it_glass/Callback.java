@@ -6,4 +6,6 @@ package com.example.yelim.it_glass;
 
 public interface Callback {
     void callBackMethod();
+    void callBackMethod(boolean value);
 }
+
