@@ -319,6 +319,7 @@ public class ServerDatabaseManager {
      * 서버에서 사용자의 친구들의 음주량을 받아와 tempFriendDrink 리스트(=buffer)에 저장.
      */
     public static void getFriendListDrinkAmount() {
+        tempFriendDrink.clear();
         for (int i = 0; i < ServerDatabaseManager.getFriendList().size(); i++) {
             final int j = i;
             ServerDatabaseManager.getFriendDrinkAmount(friendList.get(i).getfID());
@@ -369,16 +370,29 @@ public class ServerDatabaseManager {
         tempFriendDrink.clear();
     }
 
+    /**
+     * 술을 마신다 로 변경
+     */
     public static void turnOnDrinkTiming() {
-        // 술을 마신다 로 변경
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
         mDatabaseReference.child(userID).child("drink").child("timing").setValue(1);
     }
 
+    /**
+     * 술을 안마신다 로 변경
+     */
     public static void turnOffDrinkTiming() {
-        // 술을 안마신다 로 변경
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
         mDatabaseReference.child(userID).child("drink").child("timing").setValue(0);
+    }
+
+    /**
+     * 처음 app 시작 시 server database 값을 초기화 및 이전 데이터를 local database에 저장
+     */
+    public static void resetServerDB() {
+        turnOffDrinkTiming();
+
+        mDatabaseReference.child(userID).child("drink").child("amount").setValue("0");
     }
 
     /**
