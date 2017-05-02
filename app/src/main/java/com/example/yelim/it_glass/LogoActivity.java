@@ -55,5 +55,7 @@ public class LogoActivity extends AppCompatActivity {
     
     private void setting() {
         ServerDatabaseManager.setLocalUserID(dbManager.getLocalUserName());
+        ServerDatabaseManager.resetServerDB();
+
     }
 }

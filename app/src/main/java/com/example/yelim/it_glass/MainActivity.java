@@ -33,7 +33,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), FriendListDetailActivity.class);
-                intent.putExtra("LAYOUT_TYPE", "ADD");
+                String[] info = new String[2];
+                for(int i=0; i<2; i++) info[i] = new String();
+                info[0] = "ADD";
+                info[1] = "END";
+                intent.putExtra("LAYOUT_TYPE", info);
                 startActivityForResult(intent, REQUEST_CODE_MAIN);
             }
         });
