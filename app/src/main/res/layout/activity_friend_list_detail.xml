@@ -22,9 +22,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@+id/friendDetailName"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginLeft="15dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginStart="15dp"
                 android:layout_toLeftOf="@+id/friendDetailName"
                 android:layout_toStartOf="@+id/friendDetailName"
@@ -57,20 +57,26 @@
             android:id="@+id/lofriendDrink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/lofriendName">
+            android:layout_below="@+id/lofriendName"
+            android:layout_marginBottom="10dp">
 
             <TextView
                 android:id="@+id/tvFriendDetailDrink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/friendDetailDrink"
-                android:layout_toLeftOf="@+id/friendDetailDrink"
-                android:layout_toStartOf="@+id/friendDetailDrink" />
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
+                android:text="음주량" />
 
             <TextView
                 android:id="@+id/friendDetailDrink"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/tvFriendDetailDrink"
+                android:layout_toRightOf="@+id/tvFriendDetailDrink"
+                android:layout_toEndOf="@+id/tvFriendDetailDrink" />
         </LinearLayout>
 
         <LinearLayout
@@ -86,17 +92,16 @@
                 android:layout_alignBaseline="@+id/btFriendDetailLight"
                 android:layout_marginLeft="15dp"
                 android:layout_marginStart="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:layout_toLeftOf="@+id/btFriendDetailLight"
                 android:layout_toStartOf="@+id/btFriendDetailLight"
                 android:text="전구 색" />
 
-            <Button
-                android:id="@+id/btFriendDetailLight"
+            <TextView
+                android:id="@+id/friendDetailLight"
                 android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/white_plus_icon"/>
+                android:layout_height="22dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -111,8 +116,8 @@
                 android:id="@+id/btFriendSave"
                 android:layout_width="30dp"
                 android:layout_height="22dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginRight="50dp"
                 android:background="@drawable/white_check_icon" />
 
             <Button

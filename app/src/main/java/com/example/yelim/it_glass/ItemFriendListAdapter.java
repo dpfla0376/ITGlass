@@ -3,6 +3,7 @@ package com.example.yelim.it_glass;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,11 +72,18 @@ public class ItemFriendListAdapter extends BaseAdapter {
             holder.tvFriendID = (TextView) convertView.findViewById(R.id.friend_id);
             holder.tvFriendDrink = (TextView) convertView.findViewById(R.id.friend_drink);
             holder.tvFriendLight = (TextView) convertView.findViewById(R.id.friend_light);
-            holder.btFriendDelete = (Button) convertView.findViewById(R.id.btFriendDelete);
+            holder.tvFriendDelete = (TextView) convertView.findViewById(R.id.tvFriendDelete);
 
             holder.tvFriendID.setText(itemFriends.get(position).getFriendID());
             holder.tvFriendDrink.setText(itemFriends.get(position).getFriendDrink());
-            holder.tvFriendLight.setText(itemFriends.get(position).getFriendLight());
+
+            String temp = itemFriends.get(position).getFriendLight();
+            String[] tempC = temp.split("\\.");
+            int r = Integer.parseInt(tempC[0]);
+            int g = Integer.parseInt(tempC[1]);
+            int b = Integer.parseInt(tempC[2]);
+            holder.tvFriendLight.setBackgroundColor(Color.rgb(r, g, b));
+            //holder.tvFriendLight.setText(r+"."+g+"."+b);
 
             //convertview는 항상 tag를 업어간다
             convertView.setTag(holder);
@@ -91,7 +99,7 @@ public class ItemFriendListAdapter extends BaseAdapter {
 
         itemFriend = getItem(position);
         convertView.setOnClickListener(clickDetail(mContext, itemFriend));
-        holder.btFriendDelete.setOnClickListener(clickDelete(mContext, itemFriend.getFriendID()));
+        holder.tvFriendDelete.setOnClickListener(clickDelete(mContext, itemFriend.getFriendID()));
 
         return convertView;
 
@@ -150,7 +158,7 @@ public class ItemFriendListAdapter extends BaseAdapter {
         private TextView tvFriendID;
         private TextView tvFriendDrink;
         private TextView tvFriendLight;
-        private Button btFriendDelete;
+        private TextView tvFriendDelete;
     }
 
 }

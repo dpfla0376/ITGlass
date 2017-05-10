@@ -33,28 +33,30 @@
 
     <TextView
         android:id="@+id/friend_light"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="20dp"
         android:layout_centerVertical="true"
         android:textColor="#000000"
         android:textSize="15dp" />
 
     </RelativeLayout>
-    <Button
-        android:id="@+id/btFriendDelete"
+    <TextView
+        android:id="@+id/tvFriendDelete"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:text="X"
         android:textSize="15dp"
+        android:textColor="@color/materialcolorpicker__red"
+        android:textStyle="bold"
+        android:gravity="center"
         android:layout_toRightOf="@+id/loFriendInfo"
         android:layout_toEndOf="@+id/loFriendInfo"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"/>
->>>>>>> ServerManager
 </RelativeLayout>
