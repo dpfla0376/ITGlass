@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.yelim.it_glass">
 
-    <!-- Bluetooth permission -->
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-sdk tools:overrideLibrary="com.pes.androidmaterialcolorpickerdialog" />
 
-    <uses-sdk tools:overrideLibrary="com.pes.androidmaterialcolorpickerdialog"/>
+    <!-- Bluetooth permission -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -18,26 +18,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name=".MainActivity" />
-        <activity android:name=".LogoActivity" >
+        <activity android:name=".LogoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity"/>
-        <activity android:name=".FriendListDetailActivity" android:theme="@style/Theme.AppCompat.Dialog"/>
+        <activity android:name=".RegisterActivity" />
+        <activity
+            android:name=".FriendListDetailActivity"
+            android:theme="@style/Theme.AppCompat.Dialog" />
 
         <service android:name=".ItGlassFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service android:name=".ItGlassFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>

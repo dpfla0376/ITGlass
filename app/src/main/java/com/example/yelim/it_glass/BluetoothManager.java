@@ -241,6 +241,7 @@ public class BluetoothManager {
                 Log.d("BLUETOOTH", "trying write data to my device");
                 toDeviceStream.write(toDeviceString.getBytes());
             } catch (IOException e) {
+                Log.e("BLUETOOTH", "fail write data to my device");
                 e.printStackTrace();
             }
         }
