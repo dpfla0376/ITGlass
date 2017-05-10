@@ -3,6 +3,7 @@ package com.example.yelim.it_glass;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
@@ -35,7 +36,7 @@ public class FriendListDetailActivity extends Activity {
     TextView tvFriendDetailDrink;
     TextView friendDetailDrink;
     TextView tvFriendDetailLight;
-    Button btLight;
+    TextView friendLight;
     Button btFriendSave;
     Button btFriendAddCancel;
 
@@ -65,7 +66,7 @@ public class FriendListDetailActivity extends Activity {
         friendDetailDrink = (TextView) findViewById(R.id.friendDetailDrink);
         //cp = new ColorPicker(FriendListDetailActivity.this, 255, 255, 255);
         tvFriendDetailLight = (TextView) findViewById(R.id.tvFriendDetailLight);
-        btLight = (Button) findViewById(R.id.btFriendDetailLight);
+        friendLight = (TextView) findViewById(R.id.friendDetailLight);
         btFriendSave = (Button) findViewById(R.id.btFriendSave);
         btFriendAddCancel = (Button) findViewById(R.id.btFriendAddCancel);
 
@@ -93,7 +94,8 @@ public class FriendListDetailActivity extends Activity {
             previousColorB = Integer.parseInt(tempC[2]);
             cp = new ColorPicker(FriendListDetailActivity.this, previousColorR, previousColorG, previousColorB);
 
-            btLight.setOnClickListener(new OnClickListener() {
+            friendLight.setBackgroundColor(Color.rgb(previousColorR, previousColorG, previousColorB));
+            friendLight.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -109,6 +111,7 @@ public class FriendListDetailActivity extends Activity {
                     selectedColorG = cp.getGreen();
                     selectedColorB = cp.getBlue();
                     Log.d("COLOR_PICKER", "color : " + selectedColorR + "/" + selectedColorG + "/" + selectedColorB);
+                    friendLight.setBackgroundColor(Color.rgb(selectedColorR, selectedColorG, selectedColorB));
 
                     cp.dismiss();
                 }
@@ -192,7 +195,8 @@ public class FriendListDetailActivity extends Activity {
                 }
             });
 
-            btLight.setOnClickListener(new OnClickListener() {
+            friendLight.setBackgroundColor(Color.WHITE);
+            friendLight.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -207,6 +211,7 @@ public class FriendListDetailActivity extends Activity {
                     selectedColorG = cp.getGreen();
                     selectedColorB = cp.getBlue();
                     Log.d("COLOR_PICKER", "color : " + selectedColorR + "/" + selectedColorG + "/" + selectedColorB);
+                    friendLight.setBackgroundColor(Color.rgb(selectedColorR, selectedColorG, selectedColorB));
 
                     cp.dismiss();
                 }
