@@ -19,7 +19,11 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name=".MainActivity" />
         <activity android:name=".LogoActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" />
         <activity
@@ -38,11 +42,7 @@
         </service>
 
         <activity android:name=".CalendarActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
