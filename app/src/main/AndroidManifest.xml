@@ -30,6 +30,7 @@
             android:name=".FriendListDetailActivity"
             android:theme="@style/Theme.AppCompat.Dialog" />
         <activity android:name=".SettingActivity" />
+        <activity android:name=".CalendarActivity" />
 
         <service android:name=".ItGlassFirebaseMessagingService">
             <intent-filter>
@@ -41,8 +42,6 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
-        <activity android:name=".SettingActivity"></activity>
     </application>
 
 </manifest>
