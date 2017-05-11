@@ -29,6 +29,7 @@
         <activity
             android:name=".FriendListDetailActivity"
             android:theme="@style/Theme.AppCompat.Dialog" />
+        <activity android:name=".SettingActivity" />
 
         <service android:name=".ItGlassFirebaseMessagingService">
             <intent-filter>
@@ -41,6 +42,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".SettingActivity"></activity>
     </application>
 
 </manifest>
