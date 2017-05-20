@@ -15,7 +15,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private SQLiteDatabase db;
     public static final String DB_NAME = "itGlass";
     private String DB_ADDRESS;
-    private Context mContext;
+    private static Context mContext;
 
     // DBHelper 생성자로 관리할 DB 이름과 버전 정보를 받음
     public DatabaseManager(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -37,7 +37,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     }
 
-    public String getDatabasePath() {
+    public static String getDatabasePath() {
         ContextWrapper wrapper = new ContextWrapper(mContext);
         return wrapper.getDatabasePath(DB_NAME + ".db").getAbsolutePath( );
     }
@@ -51,9 +51,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + table, null);
         if(c.getCount() == 0) {
+            db.close();
             return true;
         }
         else
+            db.close();
             return false;
     }
 
@@ -71,6 +73,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
             Log.d("LogoActivity", "-------- Local User Name : " + name);
         }
 
+        db.close();
         return name;
     }
 

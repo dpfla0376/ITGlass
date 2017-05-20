@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -218,24 +219,29 @@ public class ServerDatabaseManager {
         Log.d("SERVER_DBM", "GetReferenceSuccessful");
         //Log.d("SERVER_DBM", mDatabaseReference.child(userID).getKey().toString());
         //Log.d("SERVER_DBM", mDatabaseReference.child("Hayley").getKey().toString());
-        if (mDatabaseReference.child(userID).child("friend_list").getKey()!=null) {
-            mDatabaseReference.child(userID).child("friend_list").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+        try {
+            if (mDatabaseReference.child(userID).child("friend_list").getKey() != null) {
+                mDatabaseReference.child(userID).child("friend_list").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    Log.d("SERVER_DBM", "-------ValueEvent");
-                    Log.d("SERVER_DBM", "FriendListSize : " + dataSnapshot.getChildrenCount());
-                    collectFriends((Map<String, String>) dataSnapshot.getValue());
-                    for (int i = 0; i < friendList.size(); i++)
-                        Log.d("FRIEND_LIST", friendList.get(i).getfID() + ":" + friendList.get(i).getfLight());
-                    callback.callBackMethod();
-                }
+                        Log.d("SERVER_DBM", "-------ValueEvent");
+                        Log.d("SERVER_DBM", "FriendListSize : " + dataSnapshot.getChildrenCount());
+                        collectFriends((Map<String, String>) dataSnapshot.getValue());
+                        for (int i = 0; i < friendList.size(); i++)
+                            Log.d("FRIEND_LIST", friendList.get(i).getfID() + ":" + friendList.get(i).getfLight());
+                        callback.callBackMethod();
+                    }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
+            }
+        } catch(NullPointerException e) {
+            Log.e("MainActivity", "-------Firebase Database NULL!");
+            
         }
     }
 
@@ -290,29 +296,53 @@ public class ServerDatabaseManager {
         friendList.clear();
         if (friends != null) {
             for (Map.Entry<String, String> entry : friends.entrySet()) {
-                mDatabaseReference.child(entry.getKey()).child("drink").addChildEventListener(myEventListener(entry.getKey(), entry.getValue()));
-                friendList.add(new Friend(entry.getKey(), entry.getValue()));
+                if(mDatabaseReference.child(entry.getKey()).child("friend_list").getKey() != null) {
+                    Log.e("mDatabaseReference", "---------" + mDatabaseReference.child(entry.getKey()).child("friend_list").getKey().toString());
+                    mDatabaseReference.child(entry.getKey()).child("drink").addChildEventListener(myEventListener(entry.getKey(), entry.getValue()));
+                    friendList.add(new Friend(entry.getKey(), entry.getValue()));
+                }
+                else {
+                    //Log.e("SERVER_DBM", "----friend " + entry.getKey() + " is not a user");
+                    //mDatabaseReference.child(userID).child("friend_list").child(entry.getKey()).removeValue();
+                    //삭제된 user가 친구목록에 있음. 리스너 달지 말고 친구목록에서 제거
+                }
             }
         }
     }
 
     public static void getFriendDrinkAmount(final String friendID) {
-        mDatabaseReference.child(friendID).child("drink").child("amount").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        if(mDatabaseReference.child(friendID) != null) {
+            mDatabaseReference.child(friendID).child("drink").child("amount").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Log.d("SERVER_DBM", "-------FriendDrinkValueEvent");
-                tempFriendDrink.add(dataSnapshot.getValue(String.class));
-                Log.d("SERVER_DBM", "-------" + friendID + " : " + tempFriendDrink + "잔");
-                flag++;
-                innerCallback.callBackMethod();
-            }
+                    Log.d("SERVER_DBM", "-------FriendDrinkValueEvent");
+                    if (dataSnapshot.getValue(String.class) != null) {
+                        tempFriendDrink.add(dataSnapshot.getValue(String.class));
+                        Log.d("SERVER_DBM", "-------" + friendID + " : " + tempFriendDrink + "잔");
+                        flag++;
+                    }
+                    else {
+                        Log.e("SERVER_DBM", "----friend " + friendID + " is not a user");
+                        for(int i=0; i<friendList.size(); i++) {
+                            if(friendList.get(i).getfID().equals(friendID)) friendList.remove(i);
+                        }
+                        mDatabaseReference.child(userID).child("friend_list").child(friendID).removeValue();
+                    }
+                    innerCallback.callBackMethod();
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
+        else {
+            //Log.e("SERVER_DBM", "----friend " + friendID + " is not a user");
+            //mDatabaseReference.child(userID).child("friend_list").child(friendID).removeValue();
+            //삭제된 user가 친구목록에 있음. 리스너 달지 말고 친구목록에서 제거
+        }
     }
 
     /**
@@ -393,6 +423,15 @@ public class ServerDatabaseManager {
         turnOffDrinkTiming();
 
         mDatabaseReference.child(userID).child("drink").child("amount").setValue("0");
+    }
+
+    /**
+     * Firebase에 존재하는 userID 정보를 삭제
+     */
+    public static void deleteServerData() {
+        //access [ friend_list ] line in firebase
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+        mDatabaseReference.child(userID).removeValue();
     }
 
     /**

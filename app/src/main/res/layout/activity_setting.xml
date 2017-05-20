@@ -29,6 +29,68 @@
         android:layout_marginRight="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/underline" />
+
+    <RelativeLayout
+        android:id="@+id/drinkLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main_underline"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp">
+        <TextView
+            android:id="@+id/tvDrink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="음주량노출"
+            android:textColor="@color/materialcolorpicker__black"
+            android:textSize="20dp"
+            android:layout_centerVertical="true"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/materialcolorpicker__black"
+            android:textOff="OFf"
+            android:textOn="On" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/drinkLayout"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/tvWithdrawl"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="회원탈퇴"
+            android:background="#008cff"
+            android:textColor="@color/materialcolorpicker__white"
+            android:textSize="20dp"
+            android:layout_centerVertical="true" />
+        <TextView
+            android:id="@+id/tvContact"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="Developer"
+            android:background="#008cff"
+            android:textColor="@color/materialcolorpicker__white"
+            android:textSize="20dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tvWithdrawl"
+            android:layout_marginLeft="20dp"/>
+    </RelativeLayout>
 
 </RelativeLayout>

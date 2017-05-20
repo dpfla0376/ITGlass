@@ -1,5 +1,8 @@
 package com.example.yelim.it_glass;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -20,11 +23,13 @@ public class MainActivity extends AppCompatActivity {
     ViewPager vp;
     LinearLayout ll;
     TextView setting;
+    Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext = this;
         Log.d("DATABASE", "---------" + dbManager.getDatabasePath() + "---------");
 
         vp = (ViewPager) findViewById(R.id.vp);
@@ -72,12 +77,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_MAIN);
             }
         });
 
         setBtManager();
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("TAG", "---------- MainActivityResult");
+        Log.d("REQUEST_CODE", "---------- " + requestCode);
+
+        if(requestCode == REQUEST_CODE_MAIN) {
+            if(data.getExtras().getString("app_restart").equals("true")) {
+                Intent mStartActivity = new Intent(mContext, LogoActivity.class);
+                int mPendingIntentId = 0000;
+                PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager amr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                amr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                finishAndRemoveTask();
+            }
+        }
     }
 
     View.OnClickListener movePageListener = new View.OnClickListener() {
