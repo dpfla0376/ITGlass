@@ -33,8 +33,8 @@ public class RegisterActivity extends AppCompatActivity {
         idConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                idConfirmButton.setEnabled(false);
                 //inputID of user is already in Server
-
                 ServerDatabaseManager.hasID(inputID.getText().toString());
                 Callback callback = new Callback() {
                     @Override
