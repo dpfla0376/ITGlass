@@ -61,8 +61,8 @@ public class RegisterActivity extends AppCompatActivity {
                         //inputID of user is not in Server
                         else {
                             //Server로 ID 전송 및 저장
-                            ServerDatabaseManager.saveUserID(inputID.getText().toString());
                             ServerDatabaseManager.setLocalUserID(inputID.getText().toString());
+                            ServerDatabaseManager.saveUserID(inputID.getText().toString());
 
                             //DB에 ID 정보 저장
                             String[] record = new String[1];                                //record 크기 할당(맞나..?)

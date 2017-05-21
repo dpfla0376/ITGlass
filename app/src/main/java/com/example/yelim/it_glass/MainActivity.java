@@ -98,7 +98,13 @@ public class MainActivity extends AppCompatActivity {
                 PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
                 AlarmManager amr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
                 amr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-                finishAndRemoveTask();
+                int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+                if (currentapiVersion >= 21) {
+                    finishAndRemoveTask();
+                }
+                else {
+                    finishAffinity();
+                }
             }
         }
     }

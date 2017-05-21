@@ -45,9 +45,23 @@ public class LogoActivity extends AppCompatActivity {
 
                 else {
                     setting();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    Callback callback = new Callback() {
+                        @Override
+                        public void callBackMethod() {
+                        }
+
+                        @Override
+                        public void callBackMethod(boolean value) {
+                            Log.d("setting_callback", "callbackMethod");
+                            if(value) ServerDatabaseManager.resetServerDB();
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    };
+                    ServerDatabaseManager.setSettingCallback(callback);
+
+
                 }
             }
         }, 2000);
@@ -55,7 +69,7 @@ public class LogoActivity extends AppCompatActivity {
     
     private void setting() {
         ServerDatabaseManager.setLocalUserID(dbManager.getLocalUserName());
-        ServerDatabaseManager.resetServerDB();
-
+        ServerDatabaseManager.turnOffDrinkTiming();
+        ServerDatabaseManager.isDateChanged();
     }
 }

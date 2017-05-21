@@ -12,6 +12,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +32,21 @@ public class ServerDatabaseManager {
     private static int flag = 0;
     private static List<Friend> friendList = new ArrayList<Friend>();
     private static ArrayList<String> tempFriendDrink = new ArrayList<String>();
+    private static String realYear;
+    private static String realMonth;
+    private static String realDay;
+    private static String realHour;
+    private static String realMin;
+    private static String serverYear;
+    private static String serverMonth;
+    private static String serverDay;
+    private static String serverHour;
+    private static String serverMin;
+    private static boolean isDateChanged;
     private static Callback callback;
     private static Callback innerCallback;
     private static Callback hasIDCallback;
+    private static Callback settingCallback;
     //private ArrayAdapter<String> mAdapter;
 
     ServerDatabaseManager() {
@@ -83,6 +96,9 @@ public class ServerDatabaseManager {
         mDatabaseReference.child(userID).child("drink").child("amount").setValue("0");
         mDatabaseReference.child(userID).child("drink").child("timing").setValue(0);
         mDatabaseReference.child(userID).child("friend_list").setValue(null);
+        mDatabaseReference.child(userID).child("last_access").setValue("0000/00/00/00:00");
+
+        ServerDatabaseManager.setLastAccessTime();
     }
 
     /**
@@ -217,8 +233,6 @@ public class ServerDatabaseManager {
         Log.d("SERVER_DBM", "In GetFriend Method");
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
         Log.d("SERVER_DBM", "GetReferenceSuccessful");
-        //Log.d("SERVER_DBM", mDatabaseReference.child(userID).getKey().toString());
-        //Log.d("SERVER_DBM", mDatabaseReference.child("Hayley").getKey().toString());
         try {
             if (mDatabaseReference.child(userID).child("friend_list").getKey() != null) {
                 mDatabaseReference.child(userID).child("friend_list").addValueEventListener(new ValueEventListener() {
@@ -375,8 +389,10 @@ public class ServerDatabaseManager {
      * tempFriendDrink 버퍼의 값을 실제 friendList에 복사.
      */
     public static void setFriendListDrinkAmount() {
-        for (int i = 0; i < ServerDatabaseManager.getFriendList().size(); i++) {
+        int j = getFriendList().size();
+        for (int i = 0; i < j; i++) {
             friendList.get(i).setfDrink(tempFriendDrink.get(i));
+            j = getFriendList().size();
         }
     }
 
@@ -417,10 +433,18 @@ public class ServerDatabaseManager {
     }
 
     /**
+     * 마지막으로 앱을 시작한 시간을 서버에 갱신
+     */
+    public static void setLastAccessTime() {
+        setTime();
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+        mDatabaseReference.child(userID).child("last_access").setValue(realYear + "/" + realMonth + "/" + realDay + "/" + realHour + ":" + realMin);
+    }
+
+    /**
      * 처음 app 시작 시 server database 값을 초기화 및 이전 데이터를 local database에 저장
      */
     public static void resetServerDB() {
-        turnOffDrinkTiming();
 
         mDatabaseReference.child(userID).child("drink").child("amount").setValue("0");
     }
@@ -432,6 +456,89 @@ public class ServerDatabaseManager {
         //access [ friend_list ] line in firebase
         mDatabaseReference = mFirebaseDatabase.getReference("user_list");
         mDatabaseReference.child(userID).removeValue();
+    }
+
+    private static void getLastAccessTime() {
+        mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+        mDatabaseReference.child(userID).child("last_access").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                String temp = (String) dataSnapshot.getValue();
+                String[] tempList = temp.split("/");
+                serverYear = tempList[0];
+                serverMonth = tempList[1];
+                serverDay = tempList[2];
+                String[] tempTemp = tempList[3].split(":");
+                serverHour = tempTemp[0];
+                serverMin = tempTemp[1];
+                callback.callBackMethod();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * 마지막 앱 시작 시간으로부터 날이 바뀌면 true, 같은 날 접속하면 false
+     * @return
+     */
+    public static void isDateChanged() {
+        getLastAccessTime();
+        Callback callback = new Callback() {
+            @Override
+            public void callBackMethod() {
+                Log.d("isDateChanged", "callbackMethod");
+                setLastAccessTime();
+                if(Integer.parseInt(realYear + realMonth + realDay) > Integer.parseInt(serverYear + serverMonth + serverDay))
+                    isDateChanged =  true;
+                else if(Integer.parseInt(realYear + realMonth + realDay) < Integer.parseInt(serverYear + serverMonth + serverDay)) isDateChanged = false;
+                else {
+                    Log.e("ERROR", "---- date value was worng!!");
+                    isDateChanged =  true;
+                }
+                settingCallback.callBackMethod(isDateChanged);
+            }
+
+            @Override
+            public void callBackMethod(boolean value) {
+
+            }
+        };
+        ServerDatabaseManager.setCallBack(callback);
+
+    }
+
+    /**
+     * 현재 시간 계산
+     */
+    private static void setTime() {
+        Calendar c = Calendar.getInstance();
+
+        realYear = c.get(Calendar.YEAR) + "";
+        if(c.get(Calendar.MONTH) >=0 && c.get(Calendar.MONTH) < 9) {
+            realMonth = "0" + (c.get(Calendar.MONTH)+1) + "";
+        }
+        else {
+            realMonth = (c.get(Calendar.MONTH)+1) + "";
+        }
+
+        if(c.get(Calendar.DATE) >=0 && c.get(Calendar.DATE) < 10) {
+            realDay = "0" + c.get(Calendar.DATE) + "";
+        }
+        else {
+            realDay =  c.get(Calendar.DATE) + "";
+        }
+
+        realHour = c.get(Calendar.HOUR_OF_DAY) + "";
+        int temp = c.get(Calendar.MINUTE);
+        if(temp >= 0 && temp < 10) realMin = "0" + temp;
+        else realMin = temp + "";
+
+        Log.d("access_time", realYear + "/" + realMonth + "/" + realDay + "/" + realHour + ":" + realMin);
     }
 
     /**
@@ -450,6 +557,9 @@ public class ServerDatabaseManager {
     public static void sethasIDCallback(Callback callback) {
         hasIDCallback = callback;
     }
+
+    public static void setSettingCallback(Callback callback) { settingCallback = callback; }
+
     public static Callback gethasIDCallback() {
         return hasIDCallback;
     }

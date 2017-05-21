@@ -19,6 +19,15 @@ public class SettingActivity extends AppCompatActivity {
     Context mContext;
 
     @Override
+    public void onBackPressed() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("app_restart", "false");
+        setResult(RESULT_OK, resultIntent);
+        Log.d("onBackPressed", "here");
+        finish();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);

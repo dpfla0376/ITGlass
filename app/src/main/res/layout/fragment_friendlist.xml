@@ -3,25 +3,39 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/friend_list_interface"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin = "10dp">
         <TextView
             android:id="@+id/tvFriend"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_above="@+id/friend_list"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/btFriendAdd"
             android:layout_toStartOf="@+id/btFriendAdd"
             android:text="친구목록"
             android:textColor="#008cff"
-            android:textSize="20sp"/>
-        <Button
-            android:id="@+id/btFriendAdd"
+            android:textSize="20sp"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/tvFriendAdd"
             android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/plus_icon"
-            android:textSize="10dp" />
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/plus_icon" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/tvSyncFriendList"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/sync_64x64" />
     </LinearLayout>
 
     <ListView

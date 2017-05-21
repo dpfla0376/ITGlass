@@ -9,9 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -22,7 +22,8 @@ public class FriendlistFragment extends Fragment {
 
     static int howMany;
     ListView friendListView;
-    Button btFriendAdd;
+    TextView tvFriendAdd;
+    TextView tvSyncFriendList;
     ItemFriendListAdapter friendListAdapter;
 
     public FriendlistFragment() {
@@ -39,8 +40,8 @@ public class FriendlistFragment extends Fragment {
         RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_friendlist, container, false);
         Log.d("Fragment", "Start FriendList");
 
-        btFriendAdd = (Button) layout.findViewById(R.id.btFriendAdd);
-        btFriendAdd.setOnClickListener(new View.OnClickListener() {
+        tvFriendAdd = (TextView) layout.findViewById(R.id.tvFriendAdd);
+        tvFriendAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), FriendListDetailActivity.class);
@@ -50,6 +51,14 @@ public class FriendlistFragment extends Fragment {
                 info[1] = "END";
                 intent.putExtra("LAYOUT_TYPE", info);
                 startActivityForResult(intent, MainActivity.REQUEST_CODE_MAIN);
+            }
+        });
+        tvSyncFriendList = (TextView) layout.findViewById(R.id.tvSyncFriendList);
+        tvSyncFriendList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                friendListView.setAdapter(friendListAdapter);
+                Log.d("MainActivity", "---------------list adpader is reset");
             }
         });
         Log.d("FriendListFragment", "FriendAddButton completed");
