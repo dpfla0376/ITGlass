@@ -53,6 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+                                            idConfirmButton.setEnabled(true);
                                         }
                                     })
                                     .show();
@@ -65,9 +66,10 @@ public class RegisterActivity extends AppCompatActivity {
                             ServerDatabaseManager.saveUserID(inputID.getText().toString());
 
                             //DB에 ID 정보 저장
-                            String[] record = new String[1];                                //record 크기 할당(맞나..?)
+                            String[] record = new String[2];                                //record 크기 할당(맞나..?)
                             for(int i=0; i<record.length; i++) record[i] = new String();    //record 초기화
                             record[0] = inputID.getText().toString();
+                            record[1] = "on";
                             dbManager.insertToDatabase(Database.UserTable._TABLENAME, record);
                             Log.d("DATABASE", "---------user_registered--------");
 

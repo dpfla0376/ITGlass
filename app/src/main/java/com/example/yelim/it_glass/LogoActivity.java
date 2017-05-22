@@ -71,5 +71,6 @@ public class LogoActivity extends AppCompatActivity {
         ServerDatabaseManager.setLocalUserID(dbManager.getLocalUserName());
         ServerDatabaseManager.turnOffDrinkTiming();
         ServerDatabaseManager.isDateChanged();
+        dbManager.getSetting();
     }
 }

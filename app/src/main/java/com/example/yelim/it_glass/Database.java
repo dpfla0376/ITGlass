@@ -18,33 +18,30 @@ public final class Database {
     public static final class UserTable  {
 
         public static final String ID = "id";
-        //settings 기능 추가
+        public static final String DRINK_ON_OFF = "drink_on_off";
 
         public static final String _TABLENAME = "USER";
 
         public static final String _CREATE = "CREATE TABLE "
                 + _TABLENAME + "("
-                + ID + " TEXT PRIMARY KEY);";
+                + ID + " TEXT PRIMARY KEY, "
+                + DRINK_ON_OFF + " TEXT);";
        }
 
     /**
-     * create [ friend table ] in database
+     * create [ drink_record table ] in database
      */
-    public static final class FriendTable implements BaseColumns {
+    public static final class DrinkRecordTable implements BaseColumns {
 
-        public static final String FRIEND_ID = "id";
-        public static final String R = "r";
-        public static final String G = "g";
-        public static final String B = "b";
+        public static final String DATE = "date";
+        public static final String DRINK = "drink";
 
-        public static final String _TABLENAME = "FRIEND";
+        public static final String _TABLENAME = "drink_record";
 
         public static final String _CREATE = "CREATE TABLE "
                 + _TABLENAME + "("
-                + FRIEND_ID + " TEXT PRIMARY KEY, "
-                + R + " INT, "
-                + G + " INT, "
-                + B + " INT);";
+                + DATE + " TEXT PRIMARY KEY, "
+                + DRINK + " TEXT);";
     }
 
 }

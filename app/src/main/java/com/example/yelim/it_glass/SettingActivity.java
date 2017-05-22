@@ -9,12 +9,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
 public class SettingActivity extends AppCompatActivity {
+    Switch swtOnOff;
     TextView tvWithdrawl;
     Context mContext;
 
@@ -32,6 +36,27 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         mContext = this;
+
+        swtOnOff = (Switch) findViewById(R.id.swtOnOff);
+        swtOnOff.setChecked(DatabaseManager.isDrinkOn);
+        swtOnOff.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    // on -> off
+                    if (swtOnOff.isChecked()) {
+                        DatabaseManager.isDrinkOn = false;
+                        Toast.makeText(mContext, "내 음주량이 친구들에게 보이지 않게 됩니다.", Toast.LENGTH_SHORT);
+                    }
+                    // off -> on
+                    else {
+                        DatabaseManager.isDrinkOn = true;
+                        Toast.makeText(mContext, "내 음주량이 친구들에게 보이게 됩니다.", Toast.LENGTH_SHORT);
+                    }
+                }
+                return false;
+            }
+        });
 
         tvWithdrawl = (TextView) findViewById(R.id.tvWithdrawl);
         tvWithdrawl.setOnClickListener(new View.OnClickListener() {

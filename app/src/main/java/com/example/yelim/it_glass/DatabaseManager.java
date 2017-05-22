@@ -14,6 +14,7 @@ import android.util.Log;
 public class DatabaseManager extends SQLiteOpenHelper {
     private SQLiteDatabase db;
     public static final String DB_NAME = "itGlass";
+    public static boolean isDrinkOn;
     private String DB_ADDRESS;
     private static Context mContext;
 
@@ -28,7 +29,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         // 새로운 테이블 생성
         this.db = db;
         this.db.execSQL(Database.UserTable._CREATE);
-        //this.db.execSQL(Database.FriendTable._CREATE);
+        this.db.execSQL(Database.DrinkRecordTable._CREATE);
         Log.d("DATABASE", "-------created-------");
     }
 
@@ -39,7 +40,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public static String getDatabasePath() {
         ContextWrapper wrapper = new ContextWrapper(mContext);
-        return wrapper.getDatabasePath(DB_NAME + ".db").getAbsolutePath( );
+        return wrapper.getDatabasePath(DB_NAME + ".db").getAbsolutePath();
     }
 
     /**
@@ -54,9 +55,30 @@ public class DatabaseManager extends SQLiteOpenHelper {
             db.close();
             return true;
         }
-        else
+        else {
             db.close();
             return false;
+        }
+    }
+
+    /**
+     * check if the table is empty where attribute = attrValue
+     * @param table
+     * @param attribute
+     * @param attrValue
+     * @return
+     */
+    public boolean isEmpty(String table, String attribute, String attrValue) {
+        db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + table + " WHERE " + attribute + "='" + attrValue + "'", null);
+        if(c.getCount() == 0) {
+            db.close();
+            return true;
+        }
+        else {
+            db.close();
+            return false;
+        }
     }
 
     /**
@@ -66,15 +88,39 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public String getLocalUserName() {
         String name = new String();
         db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM USER", null);
+        Cursor c = db.rawQuery("SELECT " + Database.UserTable.ID + " FROM USER", null);
         if(c.getCount() != 0) {
             c.moveToNext();
             name = c.getString(0);
             Log.d("LogoActivity", "-------- Local User Name : " + name);
         }
+        else {
+            Log.e("DATABASE", "------- getLocalUserName() ERROR");
+        }
 
         db.close();
         return name;
+    }
+
+    public void getSetting() {
+        db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT " + Database.UserTable.DRINK_ON_OFF + " FROM USER", null);
+        if(c.getCount() != 0) {
+            c.moveToNext();
+            if(c.getString(0).equals("on")) {
+                isDrinkOn = true;
+            }
+            else if(c.getString(0).equals("off")) {
+                isDrinkOn = false;
+            }
+            else {
+                Log.e("DATABASE", "------- getSetting() ERROR");
+            }
+        }
+        else {
+            Log.e("DATABASE", "------- getSetting() ERROR");
+        }
+        db.close();
     }
 
     /**
@@ -86,8 +132,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if(TABLE_NAME.equals(Database.UserTable._TABLENAME)) {
             insertToUserTable(record);
         }
-        else if(TABLE_NAME.equals(Database.FriendTable._TABLENAME)) {
-            insertToFriendTable(record);
+        else if(TABLE_NAME.equals(Database.DrinkRecordTable._TABLENAME)) {
+            insertToDrinkRecordTable(record);
         }
         else {
             Log.e("DB_INSERT", "--------wrong_table_name--------");
@@ -97,14 +143,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
     /**
      * update [ TABLE_NAME table ] with record
      * @param TABLE_NAME
-     * @param record
+     * @param attribute
+     * @param value
+     * @param conAttr
+     * @param conAttrValue
      */
-    public void updateDatabase(String TABLE_NAME, String[] record) {
+    public void updateDatabase(String TABLE_NAME, String attribute, String value, String conAttr, String conAttrValue) {
         if(TABLE_NAME.equals(Database.UserTable._TABLENAME)) {
-            updateUserTable(record);
+            updateUserTable(attribute, value, conAttr, conAttrValue);
         }
-        else if(TABLE_NAME.equals(Database.FriendTable._TABLENAME)) {
-            updateFriendTable(record);
+        else if(TABLE_NAME.equals(Database.DrinkRecordTable._TABLENAME)) {
+            updateDrinkRecordTable(attribute, value, conAttr, conAttrValue);
         }
         else {
             Log.e("DB_UPDATE", "--------wrong_table_name--------");
@@ -119,8 +168,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db = getWritableDatabase();
         db.execSQL("INSERT INTO "
                 + Database.UserTable._TABLENAME
-                + " (" + Database.UserTable.ID + ") VALUES ("
-                + "'" + record[0] + "');");
+                + " (" + Database.UserTable.ID
+                + ", " + Database.UserTable.DRINK_ON_OFF + ") VALUES ("
+                + "'" + record[0]
+                + "', '" + record[1] + "');");
         db.close();
     }
 
@@ -128,40 +179,48 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * insert record to [ friend table ]
      * @param record
      */
-    private void insertToFriendTable(String[] record) {
+    private void insertToDrinkRecordTable(String[] record) {
         db = getWritableDatabase();
         db.execSQL("INSERT INTO "
-                + Database.FriendTable._TABLENAME
-                + " (" + Database.FriendTable.FRIEND_ID + ") VALUES ("
-                + "'" + record[0] + "');");
+                + Database.DrinkRecordTable._TABLENAME
+                + " (" + Database.DrinkRecordTable.DATE
+                + ", " + Database.DrinkRecordTable.DRINK +") VALUES ("
+                + "'" + record[0]
+                + "', '" + record[1] + "');");
         db.close();
     }
 
     /**
      * update [ user table ]
-     * @param record
+     * @param attribute
+     * @param value
+     * @param conAttr
+     * @param conAttrValue
      */
-    private void updateUserTable(String[] record) {
+    private void updateUserTable(String attribute, String value, String conAttr, String conAttrValue) {
         db = getWritableDatabase();
         db.execSQL("UPDATE "
                 + Database.UserTable._TABLENAME
                 + " SET "
-                + Database.UserTable.ID
-                + "='" + record[0] + "'");
+                + attribute
+                + "='" + value + "' WHERE " + conAttr + "='" + conAttrValue + "'");
         db.close();
     }
 
     /**
      * update [ friend table ]
-     * @param record
+     * @param attribute
+     * @param value
+     * @param conAttr
+     * @param conAttrValue
      */
-    private void updateFriendTable(String[] record) {
+    private void updateDrinkRecordTable(String attribute, String value, String conAttr, String conAttrValue) {
         db = getWritableDatabase();
         db.execSQL("UPDATE "
-                + Database.FriendTable._TABLENAME
+                + Database.DrinkRecordTable._TABLENAME
                 + " SET "
-                + Database.FriendTable.FRIEND_ID
-                + "='" + record[0] + "'");
+                + attribute
+                + "='" + value + "' WHERE " + conAttr + "='" + conAttrValue + "'");
         db.close();
     }
 

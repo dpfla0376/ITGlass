@@ -139,7 +139,7 @@ public class FriendlistFragment extends Fragment {
             friendListAdapter.addItem(
                     new ItemFriend(
                             ServerDatabaseManager.getFriendList().get(i).getfID(),
-                            ServerDatabaseManager.getFriendList().get(i).getfDrink() + "잔",
+                            ServerDatabaseManager.getFriendList().get(i).getfDrink() + " ml",
                             ServerDatabaseManager.getFriendList().get(i).getfLight()));
         }
 
