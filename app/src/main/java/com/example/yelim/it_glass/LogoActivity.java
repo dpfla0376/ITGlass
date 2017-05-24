@@ -64,7 +64,7 @@ public class LogoActivity extends AppCompatActivity {
 
                 }
             }
-        }, 2000);
+        }, 500);
     }
     
     private void setting() {

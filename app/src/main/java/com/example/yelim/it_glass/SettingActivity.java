@@ -21,12 +21,15 @@ public class SettingActivity extends AppCompatActivity {
     Switch swtOnOff;
     TextView tvWithdrawl;
     Context mContext;
+    DatabaseManager dbManager = new DatabaseManager(SettingActivity.this, DatabaseManager.DB_NAME + ".db", null, 1);
 
     @Override
     public void onBackPressed() {
         Intent resultIntent = new Intent();
         resultIntent.putExtra("app_restart", "false");
         setResult(RESULT_OK, resultIntent);
+        dbManager.updateDatabase(Database.UserTable._TABLENAME, Database.UserTable.DRINK_ON_OFF, DatabaseManager.isDrinkOn + "",
+                Database.UserTable.ID, ServerDatabaseManager.getLocalUserID());
         Log.d("onBackPressed", "here");
         finish();
     }
@@ -46,12 +49,12 @@ public class SettingActivity extends AppCompatActivity {
                     // on -> off
                     if (swtOnOff.isChecked()) {
                         DatabaseManager.isDrinkOn = false;
-                        Toast.makeText(mContext, "내 음주량이 친구들에게 보이지 않게 됩니다.", Toast.LENGTH_SHORT);
+                        Toast.makeText(mContext, "내 음주량이 친구들에게 보이지 않게 됩니다.", Toast.LENGTH_SHORT).show();
                     }
                     // off -> on
                     else {
                         DatabaseManager.isDrinkOn = true;
-                        Toast.makeText(mContext, "내 음주량이 친구들에게 보이게 됩니다.", Toast.LENGTH_SHORT);
+                        Toast.makeText(mContext, "내 음주량이 친구들에게 보이게 됩니다.", Toast.LENGTH_SHORT).show();
                     }
                 }
                 return false;
