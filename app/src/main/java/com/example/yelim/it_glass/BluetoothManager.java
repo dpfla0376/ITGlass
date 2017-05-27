@@ -74,6 +74,7 @@ public class BluetoothManager {
 
         if (myBluetoothAdapter == null) {
             // 블루투스 미지원
+            Toast.makeText(context,"블루투스 미지원으로 기능을 이용할 수 없습니다.", Toast.LENGTH_LONG).show();
             return -1;
         } else {
             if (myBluetoothAdapter.isEnabled()) {
@@ -81,6 +82,7 @@ public class BluetoothManager {
                 selectDevice();
                 return 1;
             } else // 구현해야됨
+                Toast.makeText(context,"단말 연결 후 사용해주세요.", Toast.LENGTH_LONG).show();
                 return 0;
 
         }
@@ -114,6 +116,8 @@ public class BluetoothManager {
                 public void onClick(DialogInterface dialog, int item) {
                     if (item == deviceList.size()) {
                         // 연결할 장치를 선택하지 않고 '취소'를 누른 경우
+                        Toast.makeText(context,"단말 연결 후 사용해주세요.", Toast.LENGTH_LONG).show();
+
                     } else {
                         // 연결할 장치를 선택한 경우
                         // 선택한 장치와 연결을 시도함
@@ -163,6 +167,7 @@ public class BluetoothManager {
             return 0;
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(context,"단말 연결에 실패했습니다.", Toast.LENGTH_LONG).show();
             return -1;
         }
     }

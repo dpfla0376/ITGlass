@@ -1,8 +1,11 @@
 package com.example.yelim.it_glass;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -14,16 +17,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public final static int REQUEST_CODE_MAIN = 2000;
-
+    private final int MAX_PERCENT = 60;
     final DatabaseManager dbManager = new DatabaseManager(MainActivity.this, DatabaseManager.DB_NAME + ".db", null, 1);
     ViewPager vp;
     LinearLayout ll;
     TextView setting;
     Context mContext;
+    int alcoholPercent;
+    private Alcoholysis alcoholysis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TAG", "---------- MainActivityResult");
         Log.d("REQUEST_CODE", "---------- " + requestCode);
 
-        if(requestCode == REQUEST_CODE_MAIN) {
-            if(data.getExtras().getString("app_restart").equals("true")) {
+        if (requestCode == REQUEST_CODE_MAIN) {
+            if (data.getExtras().getString("app_restart").equals("true")) {
                 Intent mStartActivity = new Intent(mContext, LogoActivity.class);
                 int mPendingIntentId = 0000;
                 PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -101,8 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 int currentapiVersion = android.os.Build.VERSION.SDK_INT;
                 if (currentapiVersion >= 21) {
                     finishAndRemoveTask();
-                }
-                else {
+                } else {
                     finishAffinity();
                 }
             }
@@ -129,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void setBtManager() {
-        //btManager=new BluetoothManager(this);
 
         BluetoothManager.setContext(this);
         BluetoothManager.checkBluetooth();
@@ -142,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (flag) {
                     case 100:
                         Log.d("Bluetooth", "DEVICE IS CONNECTED");
+                        selectDrink();
                         break;
                     case 200:
                         // 술을 마신다
@@ -151,11 +159,12 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         // 다 마셨다
-                        if (fromDeviceMessage.toString().equals("drank")) {
+                        else if (fromDeviceMessage.toString().equals("drank")) {
                             ServerDatabaseManager.turnOffDrinkTiming();
                             Log.d("Bluetooth", "NEW MESSAGE FROM YOUR DEVICE : " + fromDeviceMessage.toString());
+                        } else {
+                            int vol = Integer.parseInt(fromDeviceMessage.toString());
                         }
-
                         break;
                 }
             }
@@ -186,4 +195,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void selectDrink() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("술의 도수를 선택하세요.");
+
+        // 페어링 된 블루투스 장치의 이름 목록 작성
+        List<String> listItems = new ArrayList<String>();
+        for (int i = 0; i < MAX_PERCENT; i++) {
+            listItems.add((i + 1) + "%");
+        }
+        listItems.add("취소");    // 취소 항목 추가
+
+        final CharSequence[] items = listItems.toArray(new CharSequence[listItems.size()]);
+
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                if (item == MAX_PERCENT) {
+                    alcoholPercent = 4;
+                    Toast.makeText(mContext, "맥주 기준 4%로 설정됩니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    String tempPercent = items[item].toString().replace("%", "");
+                    alcoholPercent = Integer.parseInt(tempPercent);
+                }
+                alcoholysis = new Alcoholysis(alcoholPercent);
+
+                // 되나 테스트용
+                Toast.makeText(mContext,  alcoholysis.getTime(700, 55, "XX")+"분", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setCancelable(false);    // 뒤로 가기 버튼 사용 금지
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
 }
