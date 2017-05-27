@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class ItemFriendListAdapter extends BaseAdapter {
     private ItemFriend itemFriend;
 
     public ItemFriendListAdapter(Context context) {
+        Log.d("ItemFriendListAdapter", "created");
         mContext = context;
         itemFriends = new ArrayList<ItemFriend>();
     }

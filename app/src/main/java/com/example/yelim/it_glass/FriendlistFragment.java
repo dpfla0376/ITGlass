@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +23,12 @@ import android.widget.Toast;
 public class FriendlistFragment extends Fragment {
 
     static int howMany;
+    RelativeLayout layout;
     ListView friendListView;
     TextView tvFriendAdd;
     TextView tvSyncFriendList;
     ItemFriendListAdapter friendListAdapter;
+    Fragment thisFragment;
 
     public FriendlistFragment() {
 
@@ -36,9 +40,10 @@ public class FriendlistFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_friendlist, container, false);
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
+        layout = (RelativeLayout) inflater.inflate(R.layout.fragment_friendlist, container, false);
         Log.d("Fragment", "Start FriendList");
+        thisFragment = this;
 
         tvFriendAdd = (TextView) layout.findViewById(R.id.tvFriendAdd);
         tvFriendAdd.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +62,9 @@ public class FriendlistFragment extends Fragment {
         tvSyncFriendList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                friendListView.setAdapter(friendListAdapter);
+                ItemFriendListAdapter adapter = new ItemFriendListAdapter(getActivity());
+                makeFriendListView(adapter);
+                friendListView.setAdapter(adapter);
                 Log.d("MainActivity", "---------------list adpader is reset");
             }
         });
@@ -101,7 +108,8 @@ public class FriendlistFragment extends Fragment {
                     @Override
                     public void run() {
                         super.run();
-                        while (ServerDatabaseManager.getFlag() != ServerDatabaseManager.getFriendList().size()) {
+                        Log.d("FriendListFragment", "Flag="+ServerDatabaseManager.getFlag()+", friendListSize="+ServerDatabaseManager.getFriendList().size());
+                        while (ServerDatabaseManager.getFlag() < ServerDatabaseManager.getFriendList().size()) {
                             try {
                                 sleep(500);
                             } catch (InterruptedException e) {
@@ -111,9 +119,7 @@ public class FriendlistFragment extends Fragment {
                         //다 받아왔으면 ServerDatabaseManager의 friendList에 값을 재설정.
                         //다음번 작업을 위해 flag와 buffer를 비움.
                         ServerDatabaseManager.setFriendListDrinkAmount();
-                        ServerDatabaseManager.setFlag(0);
-                        ServerDatabaseManager.clearTempFriendDrink();
-                        makeFriendListView();
+                        makeFriendListView(friendListAdapter);
 
                         //main thread 외의 thread에서는 UI작업 불가능. handler로 처리.
                         Message msg = handler.obtainMessage();
@@ -121,6 +127,7 @@ public class FriendlistFragment extends Fragment {
                     }
                 };
                 t.start();
+
             }
             @Override
             public void callBackMethod(boolean value) {
@@ -134,9 +141,14 @@ public class FriendlistFragment extends Fragment {
         return layout;
     }
 
-    void makeFriendListView() {
+    void makeFriendListView(ItemFriendListAdapter adapter) {
+        ServerDatabaseManager.setFlag(0);
+        ServerDatabaseManager.clearTempFriendDrink();
         for (int i = 0; i < ServerDatabaseManager.getFriendList().size(); i++) {
-            friendListAdapter.addItem(
+            if(ServerDatabaseManager.getFriendList().get(i).getfDrink() == null) {
+                ServerDatabaseManager.getFriendList().get(i).setfDrink("0");
+            }
+            adapter.addItem(
                     new ItemFriend(
                             ServerDatabaseManager.getFriendList().get(i).getfID(),
                             ServerDatabaseManager.getFriendList().get(i).getfDrink() + " ml",

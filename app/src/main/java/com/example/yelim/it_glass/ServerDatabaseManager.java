@@ -326,14 +326,14 @@ public class ServerDatabaseManager {
 
     public static void getFriendDrinkAmount(final String friendID) {
         if(mDatabaseReference.child(friendID) != null) {
-            mDatabaseReference.child(friendID).child("drink").child("amount").addValueEventListener(new ValueEventListener() {
+            mDatabaseReference.child(friendID).child("drink").child("amount").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     Log.d("SERVER_DBM", "-------FriendDrinkValueEvent");
                     if (dataSnapshot.getValue(String.class) != null) {
                         tempFriendDrink.add(dataSnapshot.getValue(String.class));
-                        Log.d("SERVER_DBM", "-------" + friendID + " : " + tempFriendDrink + "잔");
+                        Log.d("SERVER_DBM", "-------" + friendID + " : " + tempFriendDrink + " ml");
                         flag++;
                     }
                     else {
@@ -359,11 +359,12 @@ public class ServerDatabaseManager {
         }
     }
 
+
     /**
      * 서버에서 사용자의 친구들의 음주량을 받아와 tempFriendDrink 리스트(=buffer)에 저장.
      */
     public static void getFriendListDrinkAmount() {
-        tempFriendDrink.clear();
+        //tempFriendDrink.clear();
         for (int i = 0; i < ServerDatabaseManager.getFriendList().size(); i++) {
             final int j = i;
             ServerDatabaseManager.getFriendDrinkAmount(friendList.get(i).getfID());
@@ -390,9 +391,12 @@ public class ServerDatabaseManager {
      */
     public static void setFriendListDrinkAmount() {
         int j = getFriendList().size();
+        Log.d("SERVER_DBM", "friendListSize=" + j);
         for (int i = 0; i < j; i++) {
-            friendList.get(i).setfDrink(tempFriendDrink.get(i));
+            String temp = tempFriendDrink.get(i);
+            friendList.get(i).setfDrink(temp);
             j = getFriendList().size();
+            Log.d("SERVER_DBM", "friendListSize=" + j);
         }
     }
 
@@ -414,6 +418,7 @@ public class ServerDatabaseManager {
 
     public static void clearTempFriendDrink() {
         tempFriendDrink.clear();
+        Log.d("SERVER_DBM", "tempFriendDrinkSize=" + tempFriendDrink.size());
     }
 
     /**
