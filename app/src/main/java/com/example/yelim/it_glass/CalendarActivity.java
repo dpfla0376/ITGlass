@@ -165,7 +165,7 @@ public class CalendarActivity extends AppCompatActivity {
                 addRecord(list, "" + (i + 1), recordList.get(j).getRecord());
                 if(j < (recordList.size() - 1)) j++;
             }
-            addRecord(list, "" + (i + 1), "content");
+            else addRecord(list, "" + (i + 1), "content");
         }
     }
 
