@@ -42,7 +42,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private GridAdapter gridAdapter;
     private ArrayList<String> dayList;
-    private ArrayList<String> contentList;
+    private ArrayList<Record> calendarList;
     private ArrayList<Record> recordList;
     private Calendar calendar;
     private int year;
@@ -62,6 +62,7 @@ public class CalendarActivity extends AppCompatActivity {
         final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
 
         recordList = new ArrayList<Record>();
+        calendarList = new ArrayList<Record>();
 
         // yyyy년 mm월
         yearAndMonth.setText(curYearFormat.format(date) + "년 " + curMonthFormat.format(date) + "월");
@@ -73,9 +74,9 @@ public class CalendarActivity extends AppCompatActivity {
 
         int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
         setCalendarHeader(dayNum);
-        setCalendarDate(recordList, calendar.get(Calendar.MONTH) + 1);
+        setCalendarDate(calendarList, calendar.get(Calendar.MONTH) + 1);
 
-        gridAdapter = new GridAdapter(getApplicationContext(), recordList);
+        gridAdapter = new GridAdapter(getApplicationContext(), calendarList);
         calendarView.setAdapter(gridAdapter);
 
         previousMonth.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +101,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
                 setCalendarHeader(dayNum);
-                setCalendarDate(recordList, calendar.get(Calendar.MONTH) + 1);
+                setCalendarDate(calendarList, calendar.get(Calendar.MONTH) + 1);
                 gridAdapter.notifyDataSetChanged();
 
             }
@@ -128,7 +129,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
                 setCalendarHeader(dayNum);
-                setCalendarDate(recordList, calendar.get(Calendar.MONTH) + 1);
+                setCalendarDate(calendarList, calendar.get(Calendar.MONTH) + 1);
                 gridAdapter.notifyDataSetChanged();
             }
         });
@@ -136,18 +137,18 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void setCalendarHeader(int dayNum) {
-        recordList.clear();
-        addRecord(recordList, "일", "");
-        addRecord(recordList, "월", "");
-        addRecord(recordList, "화", "");
-        addRecord(recordList, "수", "");
-        addRecord(recordList, "목", "");
-        addRecord(recordList, "금", "");
-        addRecord(recordList, "토", "");
+        calendarList.clear();
+        addRecord(calendarList, "일", "");
+        addRecord(calendarList, "월", "");
+        addRecord(calendarList, "화", "");
+        addRecord(calendarList, "수", "");
+        addRecord(calendarList, "목", "");
+        addRecord(calendarList, "금", "");
+        addRecord(calendarList, "토", "");
 
         //1일 - 요일 매칭 시키기 위해 공백 add
         for (int i = 1; i < dayNum; i++) {
-            addRecord(recordList, "", "");
+            addRecord(calendarList, "", "");
         }
     }
 
@@ -161,11 +162,13 @@ public class CalendarActivity extends AppCompatActivity {
         calendar.set(Calendar.MONTH, month - 1);
         recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
         for (int i = 0, j=0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-            if((i + 1) == Integer.parseInt(recordList.get(j).getDay())) {
+            if(recordList.size() != 0 && (i + 1) == Integer.parseInt(recordList.get(j).getDay())) {
                 addRecord(list, "" + (i + 1), recordList.get(j).getRecord());
                 if(j < (recordList.size() - 1)) j++;
             }
-            else addRecord(list, "" + (i + 1), "content");
+            else {
+                addRecord(list, "" + (i + 1), "");
+            }
         }
     }
 
@@ -191,7 +194,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private class GridAdapter extends BaseAdapter {
-        private final List<Record> recordList;
+        private final List<Record> calendarList;
         private final LayoutInflater inflater;
         Context context;
 
@@ -199,21 +202,21 @@ public class CalendarActivity extends AppCompatActivity {
          * @param context
          * @param recordList
          */
-        public GridAdapter(Context context, List<Record> recordList) {
+        public GridAdapter(Context context, List<Record> calendarList) {
             this.context = context;
-            this.recordList = recordList;
+            this.calendarList = calendarList;
             this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         }
 
         @Override
         public int getCount() {
-            return recordList.size();
+            return calendarList.size();
         }
 
         @Override
         public Record getItem(int position) {
-            return recordList.get(position);
+            return calendarList.get(position);
         }
 
         @Override
