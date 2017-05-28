@@ -1,11 +1,13 @@
 package com.example.yelim.it_glass;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,6 +17,8 @@ import android.widget.TextView;
 
 public class MainFragment extends Fragment {
     TextView tvUserName;
+    ImageView imgGlass;
+    TextView tvUserDrink;
     public MainFragment() {
 
     }
@@ -29,6 +33,16 @@ public class MainFragment extends Fragment {
         RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_main, container, false);
         tvUserName = (TextView) layout.findViewById(R.id.tvUserName);
         tvUserName.setText(ServerDatabaseManager.getLocalUserID() + " 님");
+        imgGlass = (ImageView) layout.findViewById(R.id.imgGlass);
+        imgGlass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CalendarActivity.class);
+                startActivity(intent);
+            }
+        });
+        tvUserDrink = (TextView) layout.findViewById(R.id.tvUserDrink);
+        tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
         Log.d("Fragment", "Start Main");
         return layout;
     }

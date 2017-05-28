@@ -43,10 +43,11 @@ public class CalendarActivity extends AppCompatActivity {
     private GridAdapter gridAdapter;
     private ArrayList<String> dayList;
     private ArrayList<String> contentList;
-    private ArrayList<Recode> recodeList;
+    private ArrayList<Record> recordList;
     private Calendar calendar;
     private int year;
     private int month;
+    final DatabaseManager dbManager = new DatabaseManager(CalendarActivity.this, DatabaseManager.DB_NAME + ".db", null, 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class CalendarActivity extends AppCompatActivity {
         final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
         final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
 
-        recodeList = new ArrayList<Recode>();
+        recordList = new ArrayList<Record>();
 
         // yyyy년 mm월
         yearAndMonth.setText(curYearFormat.format(date) + "년 " + curMonthFormat.format(date) + "월");
@@ -72,9 +73,9 @@ public class CalendarActivity extends AppCompatActivity {
 
         int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
         setCalendarHeader(dayNum);
-        setCalendarDate(recodeList, calendar.get(Calendar.MONTH) + 1);
+        setCalendarDate(recordList, calendar.get(Calendar.MONTH) + 1);
 
-        gridAdapter = new GridAdapter(getApplicationContext(), recodeList);
+        gridAdapter = new GridAdapter(getApplicationContext(), recordList);
         calendarView.setAdapter(gridAdapter);
 
         previousMonth.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +100,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
                 setCalendarHeader(dayNum);
-                setCalendarDate(recodeList, calendar.get(Calendar.MONTH) + 1);
+                setCalendarDate(recordList, calendar.get(Calendar.MONTH) + 1);
                 gridAdapter.notifyDataSetChanged();
 
             }
@@ -127,7 +128,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
                 setCalendarHeader(dayNum);
-                setCalendarDate(recodeList, calendar.get(Calendar.MONTH) + 1);
+                setCalendarDate(recordList, calendar.get(Calendar.MONTH) + 1);
                 gridAdapter.notifyDataSetChanged();
             }
         });
@@ -135,18 +136,18 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void setCalendarHeader(int dayNum) {
-        recodeList.clear();
-        addRecode(recodeList, "일", "");
-        addRecode(recodeList, "월", "");
-        addRecode(recodeList, "화", "");
-        addRecode(recodeList, "수", "");
-        addRecode(recodeList, "목", "");
-        addRecode(recodeList, "금", "");
-        addRecode(recodeList, "토", "");
+        recordList.clear();
+        addRecord(recordList, "일", "");
+        addRecord(recordList, "월", "");
+        addRecord(recordList, "화", "");
+        addRecord(recordList, "수", "");
+        addRecord(recordList, "목", "");
+        addRecord(recordList, "금", "");
+        addRecord(recordList, "토", "");
 
         //1일 - 요일 매칭 시키기 위해 공백 add
         for (int i = 1; i < dayNum; i++) {
-            addRecode(recodeList, "", "");
+            addRecord(recordList, "", "");
         }
     }
 
@@ -156,57 +157,62 @@ public class CalendarActivity extends AppCompatActivity {
      * @param list
      * @param month
      */
-    private void setCalendarDate(ArrayList<Recode> list, int month) {
+    private void setCalendarDate(ArrayList<Record> list, int month) {
         calendar.set(Calendar.MONTH, month - 1);
-        for (int i = 0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-            addRecode(list, "" + (i + 1), "content");
+        recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
+        for (int i = 0, j=0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
+            if((i + 1) == Integer.parseInt(recordList.get(j).getDay())) {
+                addRecord(list, "" + (i + 1), recordList.get(j).getRecord());
+                if(j < (recordList.size() - 1)) j++;
+            }
+            addRecord(list, "" + (i + 1), "content");
         }
     }
 
     /**
      * 날짜+기록
      */
-    private class Recode {
+/*    private class Recode {
         String day;
         String recode;
     }
-
+*/
     /**
      * @param list
      * @param day
-     * @param recode
+     * @param record
      */
-    private void addRecode(ArrayList list, String day, String recode) {
-        Recode r = new Recode();
-        r.day = day;
-        r.recode = recode;
+    private void addRecord(ArrayList list, String day, String record) {
+        Record r = new Record(day, record);
+        //r.day = day;
+        //r.record = record;
         list.add(r);
     }
 
     private class GridAdapter extends BaseAdapter {
-        private final List<Recode> recodeList;
+        private final List<Record> recordList;
         private final LayoutInflater inflater;
         Context context;
 
         /**
          * @param context
-         * @param recodeList
+         * @param recordList
          */
-        public GridAdapter(Context context, List<Recode> recodeList) {
+        public GridAdapter(Context context, List<Record> recordList) {
             this.context = context;
-            this.recodeList = recodeList;
+            this.recordList = recordList;
             this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         }
 
         @Override
         public int getCount() {
-            return recodeList.size();
+            return recordList.size();
         }
 
         @Override
-        public Recode getItem(int position) {
-            return recodeList.get(position);
+        public Record getItem(int position) {
+            return recordList.get(position);
         }
 
         @Override
@@ -222,7 +228,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 holder = new ViewHolder();
                 holder.day = (TextView) convertView.findViewById(R.id.day_item);
-                holder.recode = (TextView) convertView.findViewById(R.id.day_content);
+                holder.record = (TextView) convertView.findViewById(R.id.day_content);
 
                 convertView.setTag(holder);
             } else {
@@ -230,19 +236,19 @@ public class CalendarActivity extends AppCompatActivity {
             }
 
             // 내용! 여기서 입력!!
-            holder.day.setText("" + getItem(position).day);
-            holder.recode.setText("" + getItem(position).recode);
+            holder.day.setText("" + getItem(position).getDay());
+            holder.record.setText("" + getItem(position).getRecord());
 
             // 월화수목금토일
             if (position < 7)
-                holder.recode.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                holder.record.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
 
             return convertView;
         }
 
         private class ViewHolder {
             TextView day;
-            TextView recode;
+            TextView record;
         }
     }
 }

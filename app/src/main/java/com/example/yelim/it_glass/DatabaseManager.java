@@ -2,10 +2,14 @@ package com.example.yelim.it_glass;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Yelim on 2017-03-22.
@@ -181,12 +185,24 @@ public class DatabaseManager extends SQLiteOpenHelper {
      */
     private void insertToDrinkRecordTable(String[] record) {
         db = getWritableDatabase();
-        db.execSQL("INSERT INTO "
-                + Database.DrinkRecordTable._TABLENAME
-                + " (" + Database.DrinkRecordTable.DATE
-                + ", " + Database.DrinkRecordTable.DRINK +") VALUES ("
-                + "'" + record[0]
-                + "', '" + record[1] + "');");
+        Cursor c = db.rawQuery("SELECT " + Database.DrinkRecordTable.DRINK + " FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + "='" + record[0] + "'", null);
+        if(c.getCount() == 0) {
+            db.execSQL("INSERT INTO "
+                    + Database.DrinkRecordTable._TABLENAME
+                    + " (" + Database.DrinkRecordTable.DATE
+                    + ", " + Database.DrinkRecordTable.DRINK + ") VALUES ("
+                    + "'" + record[0]
+                    + "', '" + record[1] + "');");
+            ServerDatabaseManager.setLocalUserDrink(Integer.parseInt(record[1]));
+            ServerDatabaseManager.setServerDrinkAmount(record[1]);
+        }
+        else {
+            c.moveToNext();
+            int drink = Integer.parseInt(c.getString(0)) + Integer.parseInt(record[1]);
+            updateDrinkRecordTable(Database.DrinkRecordTable.DRINK, drink+"", Database.DrinkRecordTable.DATE, record[0]);
+            ServerDatabaseManager.setLocalUserDrink(drink);
+            ServerDatabaseManager.setServerDrinkAmount(drink+"");
+        }
         db.close();
     }
 
@@ -222,6 +238,27 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 + attribute
                 + "='" + value + "' WHERE " + conAttr + "='" + conAttrValue + "'");
         db.close();
+    }
+
+    public List getDrinkList(int conYear, int conMonth) {
+        List list = new ArrayList<Record>();
+        String data;
+        if(conMonth<10) data = conYear + "/0" + conMonth;
+        else data = conYear + "/" + conMonth;
+
+        db = getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + " LIKE '" + data + "%'", null);
+        if(c.getCount() != 0) {
+            for(int i=0; i<c.getCount(); i++) {
+                c.moveToNext();
+                String[] temp = Record.parsingDate(c.getString(0));
+                Record r = new Record(temp[0], temp[1], temp[2], c.getString(1));
+                list.add(r);
+            }
+        }
+        db.close();
+
+        return list;
     }
 
 }

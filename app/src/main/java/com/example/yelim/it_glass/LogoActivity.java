@@ -53,7 +53,14 @@ public class LogoActivity extends AppCompatActivity {
                         @Override
                         public void callBackMethod(boolean value) {
                             Log.d("setting_callback", "callbackMethod");
-                            if(value) ServerDatabaseManager.resetServerDB();
+                            // 날짜가 바뀜.
+                            if(value) {
+                                ServerDatabaseManager.resetServerDB();
+                                String[] data = new String[2];
+                                data[0] = ServerDatabaseManager.getTime();
+                                data[1] = 0 + "";
+                                dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+                            }
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
                             finish();

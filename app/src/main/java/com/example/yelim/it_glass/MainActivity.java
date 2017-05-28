@@ -164,6 +164,10 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("Bluetooth", "NEW MESSAGE FROM YOUR DEVICE : " + fromDeviceMessage.toString());
                         } else {
                             int vol = Integer.parseInt(fromDeviceMessage.toString());
+                            String[] data = new String[2];
+                            data[0] = ServerDatabaseManager.getTime();
+                            data[1] = vol + "";
+                            dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
                         }
                         break;
                 }

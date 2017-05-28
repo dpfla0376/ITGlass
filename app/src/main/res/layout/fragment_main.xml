@@ -9,9 +9,20 @@
         android:textColor="#008cff"
         android:textSize="20sp"
         android:gravity="center_vertical" />
+    <ImageView
+        android:id="@+id/imgGlass"
+        android:layout_width="150dp"
+        android:layout_height="167dp"
+        android:background="@drawable/glass"
+        android:layout_centerInParent="true"
+        />
     <TextView
+        android:id="@+id/tvUserDrink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MainPage-drink"
+        android:text="N ml"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:paddingTop="60dp"
         android:layout_centerInParent="true"/>
 </RelativeLayout>
