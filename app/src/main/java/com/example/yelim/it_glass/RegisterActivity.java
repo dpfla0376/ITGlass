@@ -71,13 +71,17 @@ public class RegisterActivity extends AppCompatActivity {
                             record[0] = inputID.getText().toString();
                             record[1] = "on";
                             dbManager.insertToDatabase(Database.UserTable._TABLENAME, record);
+                            String[] temp = Record.parsingDate(ServerDatabaseManager.getTime());
+                            record[0] = temp[0] + "/" + temp[1] + "/" + temp[2];
+                            record[1] = 0 + "";
+                            dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, record);
                             Log.d("DATABASE", "---------user_registered--------");
 
 
                             //(확인창 띄우고) MainActivity 진입
                             new AlertDialog.Builder(mContext)
                                     .setTitle("Welcome!")
-                                    .setMessage("Hello, " + record[0] + "!")
+                                    .setMessage("Hello, " + ServerDatabaseManager.getLocalUserID() + "!")
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {

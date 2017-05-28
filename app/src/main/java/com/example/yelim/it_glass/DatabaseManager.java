@@ -185,13 +185,15 @@ public class DatabaseManager extends SQLiteOpenHelper {
      */
     private void insertToDrinkRecordTable(String[] record) {
         db = getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT " + Database.DrinkRecordTable.DRINK + " FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + "='" + record[0] + "'", null);
+        String[] temp = Record.parsingDate(record[0]);
+        String date = temp[0] + "/" + temp[1] + "/" + temp[2];
+        Cursor c = db.rawQuery("SELECT " + Database.DrinkRecordTable.DRINK + " FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + "='" + date + "'", null);
         if(c.getCount() == 0) {
             db.execSQL("INSERT INTO "
                     + Database.DrinkRecordTable._TABLENAME
                     + " (" + Database.DrinkRecordTable.DATE
                     + ", " + Database.DrinkRecordTable.DRINK + ") VALUES ("
-                    + "'" + record[0]
+                    + "'" + date
                     + "', '" + record[1] + "');");
             ServerDatabaseManager.setLocalUserDrink(Integer.parseInt(record[1]));
             ServerDatabaseManager.setServerDrinkAmount(record[1]);
@@ -199,7 +201,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         else {
             c.moveToNext();
             int drink = Integer.parseInt(c.getString(0)) + Integer.parseInt(record[1]);
-            updateDrinkRecordTable(Database.DrinkRecordTable.DRINK, drink+"", Database.DrinkRecordTable.DATE, record[0]);
+            updateDrinkRecordTable(Database.DrinkRecordTable.DRINK, drink+"", Database.DrinkRecordTable.DATE, date);
             ServerDatabaseManager.setLocalUserDrink(drink);
             ServerDatabaseManager.setServerDrinkAmount(drink+"");
         }
@@ -249,10 +251,12 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db = getWritableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + " LIKE '" + data + "%'", null);
         if(c.getCount() != 0) {
+            Log.d("DBM", "query count -> " + c.getCount());
             for(int i=0; i<c.getCount(); i++) {
                 c.moveToNext();
                 String[] temp = Record.parsingDate(c.getString(0));
                 Record r = new Record(temp[0], temp[1], temp[2], c.getString(1));
+                Log.d("DBM", "in getDrinkList -> " + r.toString());
                 list.add(r);
             }
         }

@@ -184,6 +184,7 @@ public class CalendarActivity extends AppCompatActivity {
      */
     private void addRecord(ArrayList list, String day, String record) {
         Record r = new Record(day, record);
+        Log.d("CalendarActivity", "in getDrinkList -> " + r.toString());
         //r.day = day;
         //r.record = record;
         list.add(r);

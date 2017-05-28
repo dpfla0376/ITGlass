@@ -10,7 +10,6 @@ public class Record {
     private String year;
     private String month;
     private String day;
-    private String time;
 /*
     public Record(String fullDate, String record) {
         this.fullDate = fullDate;
@@ -37,7 +36,6 @@ public class Record {
         year = temp[0];
         month = temp[1];
         day = temp[2];
-        time = temp[3];
     }
 
     public Record(String year, String month, String day) {
@@ -68,7 +66,8 @@ public class Record {
         return day;
     }
 
-    public String getTime() {
-        return time;
+    @Override
+    public String toString() {
+        return "year : " + year + " / month : " + month + " / day : " + day + " / record : " + record;
     }
 }
