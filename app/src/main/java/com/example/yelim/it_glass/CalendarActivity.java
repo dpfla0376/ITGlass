@@ -200,7 +200,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         /**
          * @param context
-         * @param recordList
+         * @param calendarList
          */
         public GridAdapter(Context context, List<Record> calendarList) {
             this.context = context;
