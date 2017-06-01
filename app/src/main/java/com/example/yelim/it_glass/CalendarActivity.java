@@ -200,7 +200,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         /**
          * @param context
-         * @param recordList
+         * @param calendarList
          */
         public GridAdapter(Context context, List<Record> calendarList) {
             this.context = context;
@@ -247,7 +247,18 @@ public class CalendarActivity extends AppCompatActivity {
             if (position < 7)
                 holder.record.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
 
+            convertView.setOnClickListener(clickDetail());
+
             return convertView;
+        }
+
+        private View.OnClickListener clickDetail() {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            };
         }
 
         private class ViewHolder {

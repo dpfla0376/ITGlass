@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Context mContext;
     int alcoholPercent;
     private Alcoholysis alcoholysis;
+    private String[] info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,17 @@ public class MainActivity extends AppCompatActivity {
         setting = (TextView) findViewById(R.id.setting);
         TextView tab_first = (TextView) findViewById(R.id.tab_first);
         TextView tab_second = (TextView) findViewById(R.id.tab_second);
+        info = getIntent().getStringArrayExtra("avg_drink");
+        if(info != null && info[0].equals("refresh")) {
+            Thread t = new Thread() {
+                @Override
+                public void run() {
+                    super.run();
+                    avgDrinkAlgorithm();
+                }
+            };
+            t.start();
+        }
 
         vp.setAdapter(new pagerAdapter(getSupportFragmentManager()));
         vp.setCurrentItem(0);
@@ -232,5 +244,28 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.show();
 
+    }
+
+    private void avgDrinkAlgorithm() {
+        String drink = dbManager.getLastDateDrink();
+        if(drink == null) {
+
+        }
+        else if(drink.equals("0")){
+
+        }
+        else {
+            int iDrink = Integer.parseInt(drink);
+            if(iDrink > DatabaseManager.avgDrink + 350) {
+                iDrink *= 0.5 * iDrink;
+            }
+            else if(iDrink < DatabaseManager.avgDrink - 350) {
+                iDrink *= 1.5 * iDrink;
+            }
+            else {
+
+            }
+            dbManager.updateDatabase(Database.UserTable._TABLENAME, Database.UserTable.AVG_DRINK, iDrink+"", Database.UserTable.ID, ServerDatabaseManager.getLocalUserID());
+        }
     }
 }

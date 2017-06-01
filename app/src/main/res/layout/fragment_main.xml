@@ -25,4 +25,14 @@
         android:textStyle="bold"
         android:paddingTop="60dp"
         android:layout_centerInParent="true"/>
+    <TextView
+        android:id="@+id/tvAlcholDetox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="해독표"
+        android:textSize="20sp"
+        android:textColor="#008cff"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"/>
 </RelativeLayout>

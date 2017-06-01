@@ -19,6 +19,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private SQLiteDatabase db;
     public static final String DB_NAME = "itGlass";
     public static boolean isDrinkOn;
+    public static int avgDrink;
     private String DB_ADDRESS;
     private static Context mContext;
 
@@ -106,7 +107,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return name;
     }
 
-    public void getSetting() {
+    public void getDrinkOnOff() {
         db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT " + Database.UserTable.DRINK_ON_OFF + " FROM USER", null);
         if(c.getCount() != 0) {
@@ -120,6 +121,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
             else {
                 Log.e("DATABASE", "------- getSetting() ERROR");
             }
+        }
+        else {
+            Log.e("DATABASE", "------- getSetting() ERROR");
+        }
+        db.close();
+    }
+
+    public void getAvgDrink() {
+        db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT " + Database.UserTable.AVG_DRINK + " FROM USER", null);
+        if(c.getCount() != 0) {
+            c.moveToNext();
+            avgDrink = Integer.parseInt(c.getString(0));
         }
         else {
             Log.e("DATABASE", "------- getSetting() ERROR");
@@ -173,9 +187,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "
                 + Database.UserTable._TABLENAME
                 + " (" + Database.UserTable.ID
-                + ", " + Database.UserTable.DRINK_ON_OFF + ") VALUES ("
+                + ", " + Database.UserTable.DRINK_ON_OFF
+                + ", " + Database.UserTable.SEX
+                + ", " + Database.UserTable.AGE
+                + ", " + Database.UserTable.WEIGHT
+                + ", " + Database.UserTable.AVG_DRINK + ") VALUES ("
                 + "'" + record[0]
-                + "', '" + record[1] + "');");
+                + "', '" + record[1]
+                + "', '" + record[2]
+                + "', '" + record[3]
+                + "', '" + record[4]
+                + "', '" + record[5] + "');");
         db.close();
     }
 
@@ -263,6 +285,24 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.close();
 
         return list;
+    }
+
+    public String getLastDateDrink() {
+        String drink;
+        db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT " + Database.DrinkRecordTable.DRINK + " FROM " + Database.DrinkRecordTable._TABLENAME
+                + " WHERE " + Database.DrinkRecordTable.DATE + "='(SELECT MAX(CAST(" + Database.DrinkRecordTable.DATE + " AS Int)) FROM " + Database.DrinkRecordTable._TABLENAME + ")'", null);
+        if(c.getCount() != 0) {
+            c.moveToNext();
+            drink = c.getString(0);
+            Log.d("DBM", "getLastDateDrink value=" + drink);
+        }
+        else {
+            Log.e("DBM", "getLastDateDrink error");
+            drink = null;
+        }
+        db.close();
+        return drink;
     }
 
 }

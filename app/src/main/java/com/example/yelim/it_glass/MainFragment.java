@@ -19,6 +19,7 @@ public class MainFragment extends Fragment {
     TextView tvUserName;
     ImageView imgGlass;
     TextView tvUserDrink;
+    TextView tvAlcholDetox;
     public MainFragment() {
 
     }
@@ -43,6 +44,13 @@ public class MainFragment extends Fragment {
         });
         tvUserDrink = (TextView) layout.findViewById(R.id.tvUserDrink);
         tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
+        tvAlcholDetox = (TextView) layout.findViewById(R.id.tvAlcholDetox);
+        tvAlcholDetox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         Log.d("Fragment", "Start Main");
         return layout;
     }
