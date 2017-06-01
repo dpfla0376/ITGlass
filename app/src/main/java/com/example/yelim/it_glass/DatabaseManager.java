@@ -2,10 +2,14 @@ package com.example.yelim.it_glass;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Yelim on 2017-03-22.
@@ -15,6 +19,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     private SQLiteDatabase db;
     public static final String DB_NAME = "itGlass";
     public static boolean isDrinkOn;
+    public static int avgDrink;
     private String DB_ADDRESS;
     private static Context mContext;
 
@@ -102,7 +107,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return name;
     }
 
-    public void getSetting() {
+    public void getDrinkOnOff() {
         db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT " + Database.UserTable.DRINK_ON_OFF + " FROM USER", null);
         if(c.getCount() != 0) {
@@ -116,6 +121,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
             else {
                 Log.e("DATABASE", "------- getSetting() ERROR");
             }
+        }
+        else {
+            Log.e("DATABASE", "------- getSetting() ERROR");
+        }
+        db.close();
+    }
+
+    public void getAvgDrink() {
+        db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT " + Database.UserTable.AVG_DRINK + " FROM USER", null);
+        if(c.getCount() != 0) {
+            c.moveToNext();
+            avgDrink = Integer.parseInt(c.getString(0));
         }
         else {
             Log.e("DATABASE", "------- getSetting() ERROR");
@@ -169,9 +187,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO "
                 + Database.UserTable._TABLENAME
                 + " (" + Database.UserTable.ID
-                + ", " + Database.UserTable.DRINK_ON_OFF + ") VALUES ("
+                + ", " + Database.UserTable.DRINK_ON_OFF
+                + ", " + Database.UserTable.SEX
+                + ", " + Database.UserTable.AGE
+                + ", " + Database.UserTable.WEIGHT
+                + ", " + Database.UserTable.AVG_DRINK + ") VALUES ("
                 + "'" + record[0]
-                + "', '" + record[1] + "');");
+                + "', '" + record[1]
+                + "', '" + record[2]
+                + "', '" + record[3]
+                + "', '" + record[4]
+                + "', '" + record[5] + "');");
         db.close();
     }
 
@@ -181,12 +207,26 @@ public class DatabaseManager extends SQLiteOpenHelper {
      */
     private void insertToDrinkRecordTable(String[] record) {
         db = getWritableDatabase();
-        db.execSQL("INSERT INTO "
-                + Database.DrinkRecordTable._TABLENAME
-                + " (" + Database.DrinkRecordTable.DATE
-                + ", " + Database.DrinkRecordTable.DRINK +") VALUES ("
-                + "'" + record[0]
-                + "', '" + record[1] + "');");
+        String[] temp = Record.parsingDate(record[0]);
+        String date = temp[0] + "/" + temp[1] + "/" + temp[2];
+        Cursor c = db.rawQuery("SELECT " + Database.DrinkRecordTable.DRINK + " FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + "='" + date + "'", null);
+        if(c.getCount() == 0) {
+            db.execSQL("INSERT INTO "
+                    + Database.DrinkRecordTable._TABLENAME
+                    + " (" + Database.DrinkRecordTable.DATE
+                    + ", " + Database.DrinkRecordTable.DRINK + ") VALUES ("
+                    + "'" + date
+                    + "', '" + record[1] + "');");
+            ServerDatabaseManager.setLocalUserDrink(Integer.parseInt(record[1]));
+            ServerDatabaseManager.setServerDrinkAmount(record[1]);
+        }
+        else {
+            c.moveToNext();
+            int drink = Integer.parseInt(c.getString(0)) + Integer.parseInt(record[1]);
+            updateDrinkRecordTable(Database.DrinkRecordTable.DRINK, drink+"", Database.DrinkRecordTable.DATE, date);
+            ServerDatabaseManager.setLocalUserDrink(drink);
+            ServerDatabaseManager.setServerDrinkAmount(drink+"");
+        }
         db.close();
     }
 
@@ -222,6 +262,47 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 + attribute
                 + "='" + value + "' WHERE " + conAttr + "='" + conAttrValue + "'");
         db.close();
+    }
+
+    public List getDrinkList(int conYear, int conMonth) {
+        List list = new ArrayList<Record>();
+        String data;
+        if(conMonth<10) data = conYear + "/0" + conMonth;
+        else data = conYear + "/" + conMonth;
+
+        db = getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + " LIKE '" + data + "%'", null);
+        if(c.getCount() != 0) {
+            Log.d("DBM", "query count -> " + c.getCount());
+            for(int i=0; i<c.getCount(); i++) {
+                c.moveToNext();
+                String[] temp = Record.parsingDate(c.getString(0));
+                Record r = new Record(temp[0], temp[1], temp[2], c.getString(1));
+                Log.d("DBM", "in getDrinkList -> " + r.toString());
+                list.add(r);
+            }
+        }
+        db.close();
+
+        return list;
+    }
+
+    public String getLastDateDrink() {
+        String drink;
+        db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT " + Database.DrinkRecordTable.DRINK + " FROM " + Database.DrinkRecordTable._TABLENAME
+                + " WHERE " + Database.DrinkRecordTable.DATE + "='(SELECT MAX(CAST(" + Database.DrinkRecordTable.DATE + " AS Int)) FROM " + Database.DrinkRecordTable._TABLENAME + ")'", null);
+        if(c.getCount() != 0) {
+            c.moveToNext();
+            drink = c.getString(0);
+            Log.d("DBM", "getLastDateDrink value=" + drink);
+        }
+        else {
+            Log.e("DBM", "getLastDateDrink error");
+            drink = null;
+        }
+        db.close();
+        return drink;
     }
 
 }

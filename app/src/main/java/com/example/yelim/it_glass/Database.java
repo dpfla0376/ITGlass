@@ -19,13 +19,21 @@ public final class Database {
 
         public static final String ID = "id";
         public static final String DRINK_ON_OFF = "drink_on_off";
+        public static final String SEX = "sex";
+        public static final String AGE = "age";
+        public static final String WEIGHT = "weight";
+        public static final String AVG_DRINK = "avg_drink";
 
         public static final String _TABLENAME = "USER";
 
         public static final String _CREATE = "CREATE TABLE "
                 + _TABLENAME + "("
                 + ID + " TEXT PRIMARY KEY, "
-                + DRINK_ON_OFF + " TEXT);";
+                + DRINK_ON_OFF + " TEXT, "
+                + SEX + " TEXT, "
+                + AGE + " TEXT, "
+                + WEIGHT + " TEXT, "
+                + AVG_DRINK + " TEXT);";
        }
 
     /**

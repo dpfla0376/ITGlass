@@ -53,8 +53,19 @@ public class LogoActivity extends AppCompatActivity {
                         @Override
                         public void callBackMethod(boolean value) {
                             Log.d("setting_callback", "callbackMethod");
-                            if(value) ServerDatabaseManager.resetServerDB();
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            // 날짜가 바뀜.
+                            if(value) {
+                                ServerDatabaseManager.resetServerDB();
+                                String[] data = new String[2];
+                                data[0] = ServerDatabaseManager.getTime();
+                                data[1] = 0 + "";
+                                dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+                                intent.putExtra("avg_drink", "refresh");
+                            }
+                            else {
+                                intent.putExtra("avg_drink", "none");
+                            }
                             startActivity(intent);
                             finish();
                         }
@@ -71,6 +82,7 @@ public class LogoActivity extends AppCompatActivity {
         ServerDatabaseManager.setLocalUserID(dbManager.getLocalUserName());
         ServerDatabaseManager.turnOffDrinkTiming();
         ServerDatabaseManager.isDateChanged();
-        dbManager.getSetting();
+        dbManager.getDrinkOnOff();
+        dbManager.getAvgDrink();
     }
 }

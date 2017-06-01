@@ -29,6 +29,7 @@ public class ServerDatabaseManager {
     private static ChildEventListener mChildEventListener;
     private static Object value;
     private static String userID;
+    private static int userDrink;
     private static int flag = 0;
     private static List<Friend> friendList = new ArrayList<Friend>();
     private static ArrayList<String> tempFriendDrink = new ArrayList<String>();
@@ -99,6 +100,7 @@ public class ServerDatabaseManager {
         mDatabaseReference.child(userID).child("last_access").setValue("0000/00/00/00:00");
 
         ServerDatabaseManager.setLastAccessTime();
+        userDrink = 0;
     }
 
     /**
@@ -110,6 +112,10 @@ public class ServerDatabaseManager {
         userID = ID;
     }
 
+    public static void setLocalUserDrink(int drink) {
+        userDrink = drink;
+    }
+
     /**
      * 현재 기기의 userID를 반환
      *
@@ -118,6 +124,8 @@ public class ServerDatabaseManager {
     public static String getLocalUserID() {
         return userID;
     }
+
+    public static int getLocalUserDrink() { return userDrink; }
 
     /**
      * userID의 친구로 friendID를 추가
@@ -276,8 +284,15 @@ public class ServerDatabaseManager {
                 // 모션 끝. 다시 원상태로 복귀.
                 else if (dataSnapshot.getKey().equals("timing") && dataSnapshot.getValue(Long.class) == 0) {
                     Log.d("SERVER_DBM", "------- event from " + friendID + " / light " + light + " / stop drinking");
-                } else {
-                    Log.e("SERVER_DBM", "------ " + friendID + " [ timing ] error");
+                }
+                // 음주량 값 변경
+                else {
+                    Log.d("SERVER_DBM", "------ " + friendID + " drink amount changed");
+                    for(int i=0; i<friendList.size(); i++) {
+                        if(friendID.equals(friendList.get(i).getfID())) {
+                            friendList.get(i).setfDrink(dataSnapshot.getValue(String.class));
+                        }
+                    }
                 }
             }
 
@@ -438,6 +453,17 @@ public class ServerDatabaseManager {
     }
 
     /**
+     * 음주량 노출 설정이 on 일 경우 음주량 변경을 서버에 업데이트
+     * @param amount
+     */
+    public static void setServerDrinkAmount(String amount) {
+        if(DatabaseManager.isDrinkOn) {
+            mDatabaseReference = mFirebaseDatabase.getReference("user_list");
+            mDatabaseReference.child(userID).child("drink").child("amount").setValue(amount);
+        }
+    }
+
+    /**
      * 마지막으로 앱을 시작한 시간을 서버에 갱신
      */
     public static void setLastAccessTime() {
@@ -544,6 +570,11 @@ public class ServerDatabaseManager {
         else realMin = temp + "";
 
         Log.d("access_time", realYear + "/" + realMonth + "/" + realDay + "/" + realHour + ":" + realMin);
+    }
+
+    public static String getTime() {
+        setTime();
+        return realYear + "/" + realMonth + "/" + realDay + "/" + realHour + ":" + realMin;
     }
 
     /**
