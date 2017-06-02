@@ -80,61 +80,61 @@ public class CalendarActivity extends AppCompatActivity {
         calendarView.setAdapter(gridAdapter);
 
         previousMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int previousYear;
-                int previousMonth;
+        @Override
+        public void onClick(View v) {
+            int previousYear;
+            int previousMonth;
 
-                if (month == 1) {
-                    previousMonth = 12;
-                    previousYear = year - 1;
-                } else {
-                    previousMonth = month - 1;
-                    previousYear = year;
-                }
-                calendar = Calendar.getInstance();
-
-                calendar.set(previousYear, previousMonth - 1, 1);
-                yearAndMonth.setText(previousYear + "년 " + previousMonth + "월");
-                year = previousYear;
-                month = previousMonth;
-
-                int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
-                setCalendarHeader(dayNum);
-                setCalendarDate(calendarList, calendar.get(Calendar.MONTH) + 1);
-                gridAdapter.notifyDataSetChanged();
-
+            if (month == 1) {
+                previousMonth = 12;
+                previousYear = year - 1;
+            } else {
+                previousMonth = month - 1;
+                previousYear = year;
             }
-        });
+            calendar = Calendar.getInstance();
+
+            calendar.set(previousYear, previousMonth - 1, 1);
+            yearAndMonth.setText(previousYear + "년 " + previousMonth + "월");
+            year = previousYear;
+            month = previousMonth;
+
+            int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
+            setCalendarHeader(dayNum);
+            setCalendarDate(calendarList, calendar.get(Calendar.MONTH) + 1);
+            gridAdapter.notifyDataSetChanged();
+
+        }
+    });
 
         nextMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int nextYear;
-                int nextMonth;
+        @Override
+        public void onClick(View v) {
+            int nextYear;
+            int nextMonth;
 
-                if (month == 12) {
-                    nextMonth = 1;
-                    nextYear = year + 1;
-                } else {
-                    nextMonth = month + 1;
-                    nextYear = year;
-                }
-                calendar = Calendar.getInstance();
-
-                calendar.set(nextYear, nextMonth - 1, 1);
-                yearAndMonth.setText(nextYear + "년 " + nextMonth + "월");
-                year = nextYear;
-                month = nextMonth;
-
-                int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
-                setCalendarHeader(dayNum);
-                setCalendarDate(calendarList, calendar.get(Calendar.MONTH) + 1);
-                gridAdapter.notifyDataSetChanged();
+            if (month == 12) {
+                nextMonth = 1;
+                nextYear = year + 1;
+            } else {
+                nextMonth = month + 1;
+                nextYear = year;
             }
-        });
+            calendar = Calendar.getInstance();
 
-    }
+            calendar.set(nextYear, nextMonth - 1, 1);
+            yearAndMonth.setText(nextYear + "년 " + nextMonth + "월");
+            year = nextYear;
+            month = nextMonth;
+
+            int dayNum = calendar.get(Calendar.DAY_OF_WEEK);
+            setCalendarHeader(dayNum);
+            setCalendarDate(calendarList, calendar.get(Calendar.MONTH) + 1);
+            gridAdapter.notifyDataSetChanged();
+        }
+    });
+
+}
 
     private void setCalendarHeader(int dayNum) {
         calendarList.clear();

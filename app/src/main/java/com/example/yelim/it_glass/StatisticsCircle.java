@@ -130,11 +130,11 @@ public class StatisticsCircle extends View {
         canvas.drawArc(backgroundCircle, 270, 360, false, circlePaint);
 
         progressArc.set(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
-        if (iCurStep <= percent) {
+        if (iCurStep <= 100) {
             canvas.drawArc(progressArc, 270, -(360 * (iCurStep / 100f)), false, progressPaint);
             iCurStep++;
         } else {
-            canvas.drawArc(progressArc, 270, -(360 * (percent / 100f)), false, progressPaint);
+            canvas.drawArc(progressArc, 270, -(360 * (100 / 100f)), false, progressPaint);
         }
     }
     public void drawMiniCircle(Canvas canvas) {

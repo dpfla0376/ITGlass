@@ -236,10 +236,10 @@ public class MainActivity extends AppCompatActivity {
                     String tempPercent = items[item].toString().replace("%", "");
                     alcoholPercent = Integer.parseInt(tempPercent);
                 }
-                alcoholysis = new Alcoholysis(alcoholPercent);
+                alcoholysis = new Alcoholysis(alcoholPercent, getApplicationContext());
 
                 // 되나 테스트용
-                Toast.makeText(mContext,  alcoholysis.getTime(700, 55, "XX")+"분", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext,  alcoholysis.getTime(700, 55, "woman")+"분", Toast.LENGTH_SHORT).show();
             }
         });
 
