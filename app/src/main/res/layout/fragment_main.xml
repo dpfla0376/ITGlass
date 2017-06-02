@@ -32,6 +32,18 @@
         android:text="해독표"
         android:textSize="20sp"
         android:textColor="#008cff"
+        android:layout_marginRight="26dp"
+        android:layout_alignBaseline="@+id/alcoholChart"
+        android:layout_alignBottom="@+id/alcoholChart"
+        android:layout_toLeftOf="@+id/alcoholChart"
+        android:layout_marginEnd="26dp" />
+    <TextView
+        android:id="@+id/alcoholChart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="통계"
+        android:textSize="20sp"
+        android:textColor="#008cff"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"/>
