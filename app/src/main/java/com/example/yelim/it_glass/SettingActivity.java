@@ -20,6 +20,7 @@ import java.io.File;
 public class SettingActivity extends AppCompatActivity {
     Switch swtOnOff;
     TextView tvWithdrawl;
+    TextView tvContact;
     Context mContext;
     DatabaseManager dbManager = new DatabaseManager(SettingActivity.this, DatabaseManager.DB_NAME + ".db", null, 1);
 
@@ -101,6 +102,46 @@ public class SettingActivity extends AppCompatActivity {
                             }
                         })
                         .show();
+            }
+        });
+
+        tvContact = (TextView) findViewById(R.id.tvContact);
+        tvContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] data = {"20170601", "800"};
+                dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+                data[0] = "20170531";
+                data[1] = "360";
+                dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+                Toast.makeText(mContext, "실험 데이터 삽입 완료", Toast.LENGTH_SHORT).show();
+
+                String drink = dbManager.getLastDateDrink();
+                Toast.makeText(mContext, "마지막날 음주량=" + drink, Toast.LENGTH_SHORT).show();
+                if(drink == null) {
+
+                }
+                else if(drink.equals("0")){
+
+                }
+                else {
+                    int iDrink = Integer.parseInt(drink);
+                    int num = dbManager.getRecordNum();
+                    if(iDrink > DatabaseManager.avgDrink + 350) {
+                        iDrink = (int) (0.5 * iDrink);
+                    }
+                    else if(iDrink < DatabaseManager.avgDrink - 350) {
+                        iDrink = (int) (1.5 * iDrink);
+                    }
+                    else {
+
+                    }
+                    DatabaseManager.avgDrink = (DatabaseManager.avgDrink * num + iDrink) / (num + 1);
+                    dbManager.updateDatabase(Database.UserTable._TABLENAME, Database.UserTable.AVG_DRINK, DatabaseManager.avgDrink+"", Database.UserTable.ID, ServerDatabaseManager.getLocalUserID());
+                    Toast.makeText(mContext, "평균 음주량=" + DatabaseManager.avgDrink, Toast.LENGTH_SHORT).show();
+                    TextView tv = (TextView) findViewById(R.id.tvUserAvgDrink);
+                    tv.setText(DatabaseManager.avgDrink);
+                }
             }
         });
     }

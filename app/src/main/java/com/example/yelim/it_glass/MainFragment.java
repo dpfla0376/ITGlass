@@ -16,10 +16,12 @@ import android.widget.TextView;
  * Created by Yelim on 2017-05-02.
  */
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements TextViewCallBack {
     TextView tvUserName;
     ImageView imgGlass;
     TextView tvUserDrink;
+    TextView tvUserAvgDrink;
+    TextView tvAlcholDetox;
     TextView tvAlcholChart;
     Context mContext;
     public MainFragment() {
@@ -55,11 +57,16 @@ public class MainFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        tvUserAvgDrink = (TextView) layout.findViewById(R.id.tvUserAvgDrink);
+        tvUserAvgDrink.setText(DatabaseManager.avgDrink+"");
         Log.d("Fragment", "Start Main");
         return layout;
     }
 
-    public void refreshUserDrinkView(){
-       // tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
+    @Override
+    public void updateTextView(String tag, String data) {
+        if(tag.equals("agv_drink")) tvUserAvgDrink.setText(DatabaseManager.avgDrink);
+        else if(tag.equals("realtime_drink")) tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
+        else Log.e("updateTextView", "invalid tag");
     }
 }

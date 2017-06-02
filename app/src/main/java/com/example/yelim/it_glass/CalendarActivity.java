@@ -161,7 +161,9 @@ public class CalendarActivity extends AppCompatActivity {
     private void setCalendarDate(ArrayList<Record> list, int month) {
         calendar.set(Calendar.MONTH, month - 1);
         recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
+        //Log.d("CalendarActivity", "recordList count="+recordList.size());
         for (int i = 0, j=0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
+            //Log.d("recordList", recordList.get(j).getDay());
             if(recordList.size() != 0 && (i + 1) == Integer.parseInt(recordList.get(j).getDay())) {
                 addRecord(list, "" + (i + 1), recordList.get(j).getRecord());
                 if(j < (recordList.size() - 1)) j++;
@@ -242,6 +244,11 @@ public class CalendarActivity extends AppCompatActivity {
             // 내용! 여기서 입력!!
             holder.day.setText("" + getItem(position).getDay());
             holder.record.setText("" + getItem(position).getRecord());
+            holder.color = Color.TRANSPARENT;
+            if(!getItem(position).getRecord().equals("") && Integer.parseInt(getItem(position).getRecord()) > DatabaseManager.avgDrink + 350) {
+                holder.color = Color.RED;
+            }
+            convertView.setBackgroundColor(holder.color);
 
             // 월화수목금토일
             if (position < 7)
@@ -264,6 +271,7 @@ public class CalendarActivity extends AppCompatActivity {
         private class ViewHolder {
             TextView day;
             TextView record;
+            int color;
         }
     }
 }

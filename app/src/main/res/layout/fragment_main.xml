@@ -9,6 +9,15 @@
         android:textColor="#008cff"
         android:textSize="20sp"
         android:gravity="center_vertical" />
+    <TextView
+        android:id="@+id/tvUserAvgDrink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        android:textColor="#008cff"
+        android:textSize="20sp"
+        android:gravity="center_vertical"/>
     <ImageView
         android:id="@+id/imgGlass"
         android:layout_width="150dp"
