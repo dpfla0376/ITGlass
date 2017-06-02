@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     int alcoholPercent;
     private Alcoholysis alcoholysis;
     private String[] info;
+    MainFragment mainFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,11 +176,12 @@ public class MainActivity extends AppCompatActivity {
                             ServerDatabaseManager.turnOffDrinkTiming();
                             Log.d("Bluetooth", "NEW MESSAGE FROM YOUR DEVICE : " + fromDeviceMessage.toString());
                         } else {
-                            int vol = Integer.parseInt(fromDeviceMessage.toString());
+                            int vol = (int)Float.parseFloat(fromDeviceMessage.toString());
                             String[] data = new String[2];
                             data[0] = ServerDatabaseManager.getTime();
                             data[1] = vol + "";
                             dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+                            mainFragment.refreshUserDrinkView();
                         }
                         break;
                 }
@@ -197,7 +199,8 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new MainFragment();
+                    mainFragment = new MainFragment();
+                    return mainFragment;
                 case 1:
                     return new FriendlistFragment();
                 default:
