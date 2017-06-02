@@ -161,7 +161,7 @@ public class AlcoholChart extends AppCompatActivity {
         return 1;
     }
 
-    private int countTotal(int month) {
+    private int countTotal(int year, int month) {
         recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
         return recordList.size();
     }
@@ -184,10 +184,11 @@ public class AlcoholChart extends AppCompatActivity {
 
     private void drawCircles(){
         completedCount = countCompleted(month);
-        totalCount = countTotal(month);
+        totalCount = countTotal(year, month);
         uncompletedCount = totalCount - completedCount;
 
         completePercent = (totalCount * 100 / day);
+
         percentView.setPercent(completePercent);
         percentView.setColor("#FF323024");
         completedView.setColor("#FFFF5900");
@@ -196,9 +197,10 @@ public class AlcoholChart extends AppCompatActivity {
         uncompletedView.setColor("#FF178A50");
 
         yearAndMonth.setText(year+" / "+month);
-        totalText.setText(totalCount + "");
-        completedText.setText(completedCount + "");
-        uncompletedText.setText(uncompletedCount + "");
-        percentText.setText(completePercent + "ml");
+        totalText.setText(totalCount + "");     // 총 음주일수
+        completedText.setText(completedCount + "");     // 과음한 날
+        uncompletedText.setText(uncompletedCount + "");     // 과음 안한 날
+
+        percentText.setText(completePercent + "ml");        // 총 음주량
     }
 }
