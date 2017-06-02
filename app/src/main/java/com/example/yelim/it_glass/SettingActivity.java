@@ -139,6 +139,8 @@ public class SettingActivity extends AppCompatActivity {
                     DatabaseManager.avgDrink = (DatabaseManager.avgDrink * num + iDrink) / (num + 1);
                     dbManager.updateDatabase(Database.UserTable._TABLENAME, Database.UserTable.AVG_DRINK, DatabaseManager.avgDrink+"", Database.UserTable.ID, ServerDatabaseManager.getLocalUserID());
                     Toast.makeText(mContext, "평균 음주량=" + DatabaseManager.avgDrink, Toast.LENGTH_SHORT).show();
+                    TextView tv = (TextView) findViewById(R.id.tvUserAvgDrink);
+                    tv.setText(DatabaseManager.avgDrink);
                 }
             }
         });

@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NotificationCompat;
@@ -35,9 +36,13 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout ll;
     TextView setting;
     Context mContext;
+    MainFragment mainFragment;
+    TextViewCallBack tvCallBack;
+
     int alcoholPercent;
     private Alcoholysis alcoholysis;
     private String[] info;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         mContext = this;
         Log.d("DATABASE", "---------" + dbManager.getDatabasePath() + "---------");
 
+        handler = new Handler();
         vp = (ViewPager) findViewById(R.id.vp);
         ll = (LinearLayout) findViewById(R.id.ll);
         setting = (TextView) findViewById(R.id.setting);
@@ -200,12 +206,19 @@ public class MainActivity extends AppCompatActivity {
                             ServerDatabaseManager.turnOffDrinkTiming();
                             Log.d("Bluetooth", "NEW MESSAGE FROM YOUR DEVICE : " + fromDeviceMessage.toString());
                         } else {
-                            int vol = Integer.parseInt(fromDeviceMessage.toString());
+                            int vol = (int) Float.parseFloat(fromDeviceMessage.toString());
                             String[] data = new String[2];
                             data[0] = ServerDatabaseManager.getTime();
                             data[1] = vol + "";
                             dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
                             checkAlchol();
+                            final String temp = data[1];
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mainFragment.updateTextView("realtime_drink", temp);
+                                }
+                            });
                         }
                         break;
                 }
@@ -223,7 +236,9 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new MainFragment();
+                    mainFragment = new MainFragment();
+                    return mainFragment;
+                    //return new MainFragment();
                 case 1:
                     return new FriendlistFragment();
                 default:

@@ -15,7 +15,7 @@ import android.widget.TextView;
  * Created by Yelim on 2017-05-02.
  */
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements TextViewCallBack {
     TextView tvUserName;
     ImageView imgGlass;
     TextView tvUserDrink;
@@ -56,5 +56,12 @@ public class MainFragment extends Fragment {
         tvUserAvgDrink.setText(DatabaseManager.avgDrink+"");
         Log.d("Fragment", "Start Main");
         return layout;
+    }
+
+    @Override
+    public void updateTextView(String tag, String data) {
+        if(tag.equals("agv_drink")) tvUserAvgDrink.setText(DatabaseManager.avgDrink);
+        else if(tag.equals("realtime_drink")) tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
+        else Log.e("updateTextView", "invalid tag");
     }
 }
