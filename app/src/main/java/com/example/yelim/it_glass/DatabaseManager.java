@@ -50,17 +50,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     /**
      * check if the table is empty
+     *
      * @param table
      * @return
      */
     public boolean isEmpty(String table) {
         db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + table, null);
-        if(c.getCount() == 0) {
+        if (c.getCount() == 0) {
             db.close();
             return true;
-        }
-        else {
+        } else {
             db.close();
             return false;
         }
@@ -68,6 +68,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     /**
      * check if the table is empty where attribute = attrValue
+     *
      * @param table
      * @param attribute
      * @param attrValue
@@ -76,11 +77,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public boolean isEmpty(String table, String attribute, String attrValue) {
         db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + table + " WHERE " + attribute + "='" + attrValue + "'", null);
-        if(c.getCount() == 0) {
+        if (c.getCount() == 0) {
             db.close();
             return true;
-        }
-        else {
+        } else {
             db.close();
             return false;
         }
@@ -88,18 +88,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     /**
      * get local user name from local DataBase
+     *
      * @return local user name
      */
     public String getLocalUserName() {
         String name = new String();
         db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT " + Database.UserTable.ID + " FROM USER", null);
-        if(c.getCount() != 0) {
+        if (c.getCount() != 0) {
             c.moveToNext();
             name = c.getString(0);
             Log.d("LogoActivity", "-------- Local User Name : " + name);
-        }
-        else {
+        } else {
             Log.e("DATABASE", "------- getLocalUserName() ERROR");
         }
 
@@ -109,21 +109,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     public void getDrinkOnOff() {
         db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT " + Database.UserTable.DRINK_ON_OFF + " FROM USER", null);
-        if(c.getCount() != 0) {
+        Cursor c = db.rawQuery("SELECT " + Database.UserTable.DRINK_ON_OFF + " FROM " + Database.UserTable._TABLENAME, null);
+        if (c.getCount() != 0) {
             c.moveToNext();
-            if(c.getString(0).equals("on")) {
+            if (c.getString(0).equals("true")) {
                 isDrinkOn = true;
-            }
-            else if(c.getString(0).equals("off")) {
+            } else if (c.getString(0).equals("false")) {
                 isDrinkOn = false;
+            } else {
+                Log.e("DATABASE", "------- getSetting() value none ERROR");
             }
-            else {
-                Log.e("DATABASE", "------- getSetting() ERROR");
-            }
-        }
-        else {
-            Log.e("DATABASE", "------- getSetting() ERROR");
+        } else {
+            Log.e("DATABASE", "------- getSetting() count 0 ERROR");
         }
         db.close();
     }
@@ -131,11 +128,10 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public void getAvgDrink() {
         db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT " + Database.UserTable.AVG_DRINK + " FROM USER", null);
-        if(c.getCount() != 0) {
+        if (c.getCount() != 0) {
             c.moveToNext();
             avgDrink = Integer.parseInt(c.getString(0));
-        }
-        else {
+        } else {
             Log.e("DATABASE", "------- getSetting() ERROR");
         }
         db.close();
@@ -143,23 +139,23 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     /**
      * insert record into [ TABLE_NAME table ]
+     *
      * @param TABLE_NAME
      * @param record
      */
     public void insertToDatabase(String TABLE_NAME, String[] record) {
-        if(TABLE_NAME.equals(Database.UserTable._TABLENAME)) {
+        if (TABLE_NAME.equals(Database.UserTable._TABLENAME)) {
             insertToUserTable(record);
-        }
-        else if(TABLE_NAME.equals(Database.DrinkRecordTable._TABLENAME)) {
+        } else if (TABLE_NAME.equals(Database.DrinkRecordTable._TABLENAME)) {
             insertToDrinkRecordTable(record);
-        }
-        else {
+        } else {
             Log.e("DB_INSERT", "--------wrong_table_name--------");
         }
     }
 
     /**
      * update [ TABLE_NAME table ] with record
+     *
      * @param TABLE_NAME
      * @param attribute
      * @param value
@@ -167,19 +163,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
      * @param conAttrValue
      */
     public void updateDatabase(String TABLE_NAME, String attribute, String value, String conAttr, String conAttrValue) {
-        if(TABLE_NAME.equals(Database.UserTable._TABLENAME)) {
+        if (TABLE_NAME.equals(Database.UserTable._TABLENAME)) {
             updateUserTable(attribute, value, conAttr, conAttrValue);
-        }
-        else if(TABLE_NAME.equals(Database.DrinkRecordTable._TABLENAME)) {
+        } else if (TABLE_NAME.equals(Database.DrinkRecordTable._TABLENAME)) {
             updateDrinkRecordTable(attribute, value, conAttr, conAttrValue);
-        }
-        else {
+        } else {
             Log.e("DB_UPDATE", "--------wrong_table_name--------");
         }
     }
 
     /**
      * insert record to [ user table ]
+     *
      * @param record
      */
     private void insertToUserTable(String[] record) {
@@ -203,14 +198,20 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     /**
      * insert record to [ friend table ]
+     *
      * @param record
      */
     private void insertToDrinkRecordTable(String[] record) {
         db = getWritableDatabase();
-        String[] temp = Record.parsingDate(record[0]);
-        String date = temp[0] + "/" + temp[1] + "/" + temp[2];
+        String date;
+        if (record[0].contains("/")) {
+            String[] temp = Record.parsingDate(record[0]);
+            date = temp[0] + "" + temp[1] + "" + temp[2];
+        } else {
+            date = record[0];
+        }
         Cursor c = db.rawQuery("SELECT " + Database.DrinkRecordTable.DRINK + " FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + "='" + date + "'", null);
-        if(c.getCount() == 0) {
+        if (c.getCount() == 0) {
             db.execSQL("INSERT INTO "
                     + Database.DrinkRecordTable._TABLENAME
                     + " (" + Database.DrinkRecordTable.DATE
@@ -219,19 +220,19 @@ public class DatabaseManager extends SQLiteOpenHelper {
                     + "', '" + record[1] + "');");
             ServerDatabaseManager.setLocalUserDrink(Integer.parseInt(record[1]));
             ServerDatabaseManager.setServerDrinkAmount(record[1]);
-        }
-        else {
+        } else {
             c.moveToNext();
             int drink = Integer.parseInt(c.getString(0)) + Integer.parseInt(record[1]);
-            updateDrinkRecordTable(Database.DrinkRecordTable.DRINK, drink+"", Database.DrinkRecordTable.DATE, date);
+            updateDrinkRecordTable(Database.DrinkRecordTable.DRINK, drink + "", Database.DrinkRecordTable.DATE, date);
             ServerDatabaseManager.setLocalUserDrink(drink);
-            ServerDatabaseManager.setServerDrinkAmount(drink+"");
+            ServerDatabaseManager.setServerDrinkAmount(drink + "");
         }
         db.close();
     }
 
     /**
      * update [ user table ]
+     *
      * @param attribute
      * @param value
      * @param conAttr
@@ -244,11 +245,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 + " SET "
                 + attribute
                 + "='" + value + "' WHERE " + conAttr + "='" + conAttrValue + "'");
+        Log.d("updateUserTable", "UPDATE "
+                + Database.UserTable._TABLENAME
+                + " SET "
+                + attribute
+                + "='" + value + "' WHERE " + conAttr + "='" + conAttrValue + "' was finished");
         db.close();
     }
 
     /**
      * update [ friend table ]
+     *
      * @param attribute
      * @param value
      * @param conAttr
@@ -267,20 +274,22 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public List getDrinkList(int conYear, int conMonth) {
         List list = new ArrayList<Record>();
         String data;
-        if(conMonth<10) data = conYear + "/0" + conMonth;
-        else data = conYear + "/" + conMonth;
+        if (conMonth < 10) data = conYear + "0" + conMonth;
+        else data = conYear + "" + conMonth;
 
         db = getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + " LIKE '" + data + "%'", null);
-        if(c.getCount() != 0) {
+        Cursor c = db.rawQuery("SELECT * FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE + " LIKE '" + data + "%' ORDER BY " + Database.DrinkRecordTable.DATE, null);
+        if (c.getCount() != 0) {
             Log.d("DBM", "query count -> " + c.getCount());
-            for(int i=0; i<c.getCount(); i++) {
+            for (int i = 0; i < c.getCount(); i++) {
                 c.moveToNext();
-                String[] temp = Record.parsingDate(c.getString(0));
+                String[] temp = {c.getString(0).substring(0, 4), c.getString(0).substring(4, 6), c.getString(0).substring(6, 8)};
+                //String[] temp = Record.parsingDate(c.getString(0));
                 Record r = new Record(temp[0], temp[1], temp[2], c.getString(1));
                 Log.d("DBM", "in getDrinkList -> " + r.toString());
                 list.add(r);
             }
+
         }
         db.close();
 
@@ -288,14 +297,17 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     public String getLastDateDrink() {
-        String drink;
+        String drink = null;
         db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT " + Database.DrinkRecordTable.DRINK + " FROM " + Database.DrinkRecordTable._TABLENAME
-                + " WHERE " + Database.DrinkRecordTable.DATE + "='(SELECT MAX(CAST(" + Database.DrinkRecordTable.DATE + " AS Int)) FROM " + Database.DrinkRecordTable._TABLENAME + ")'", null);
-        if(c.getCount() != 0) {
+        String[] temp = Record.parsingDate(ServerDatabaseManager.getTime());
+        String[] resultData = new String[2];
+        Cursor c = db.rawQuery("SELECT MAX(date), drink FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE NOT (" + Database.DrinkRecordTable.DATE + "='" + (temp[0] + temp[1] + temp[2]) + "') ORDER BY " + Database.DrinkRecordTable.DATE + " DESC", null);
+        if (c.getCount() != 0) {
             c.moveToNext();
-            drink = c.getString(0);
-            Log.d("DBM", "getLastDateDrink value=" + drink);
+            resultData[0] = c.getString(0);
+            resultData[1] = c.getString(1);
+            Log.d("getLastDateDrink", "date=" + resultData[0] + ", drink=" + resultData[1]);
+            drink = resultData[1];
         }
         else {
             Log.e("DBM", "getLastDateDrink error");
@@ -303,6 +315,29 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
         db.close();
         return drink;
+    }
+
+    /**
+     * return total record number of Local Database [ drink_record ] table which is not 0
+     * @return num
+     */
+    public int getRecordNum() {
+        int num;
+        db = getReadableDatabase();
+        String[] temp = Record.parsingDate(ServerDatabaseManager.getTime());
+        String[] resultData = new String[2];
+        Cursor c = db.rawQuery("SELECT Count(*) FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE NOT (" + Database.DrinkRecordTable.DRINK + "='0')", null);
+        if (c.getCount() != 0) {
+            c.moveToNext();
+            num = Integer.parseInt(c.getString(0));
+            Log.d("getRecordNum", "num=" + num);
+        }
+        else {
+            Log.e("DBM", "getLastDateDrink error");
+            num = 0;
+        }
+        db.close();
+        return num;
     }
 
 }

@@ -2,13 +2,17 @@ package com.example.yelim.it_glass;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -104,6 +108,27 @@ public class MainActivity extends AppCompatActivity {
 
         setBtManager();
 
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        String[] warning = {"과음하셨어요! 오늘은 이제 그만!"};
+
+        //0 = request code
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        NotificationCompat.Builder notiBuilder = new NotificationCompat
+                .Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("IT잔")
+                .setContentText(warning[0])
+                .setAutoCancel(true)
+                .setSound(notificationSound)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(0, notiBuilder.build());
+
     }
 
     @Override
@@ -180,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
                             data[0] = ServerDatabaseManager.getTime();
                             data[1] = vol + "";
                             dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+                            checkAlchol();
                         }
                         break;
                 }
@@ -267,5 +293,33 @@ public class MainActivity extends AppCompatActivity {
             }
             dbManager.updateDatabase(Database.UserTable._TABLENAME, Database.UserTable.AVG_DRINK, iDrink+"", Database.UserTable.ID, ServerDatabaseManager.getLocalUserID());
         }
+    }
+
+    private void checkAlchol() {
+        if(ServerDatabaseManager.getLocalUserDrink() > DatabaseManager.avgDrink + 350) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            String[] warning = {"과음하셨어요! 오늘은 이제 그만!"};
+
+            //0 = request code
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+            NotificationCompat.Builder notiBuilder = new NotificationCompat
+                    .Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("IT잔")
+                    .setContentText(warning[0])
+                    .setAutoCancel(true)
+                    .setSound(notificationSound)
+                    .setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(0, notiBuilder.build());
+        }
+
+
+
     }
 }

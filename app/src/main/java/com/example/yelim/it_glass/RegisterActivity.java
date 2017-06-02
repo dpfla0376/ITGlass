@@ -102,11 +102,11 @@ public class RegisterActivity extends AppCompatActivity {
                             String[] record = new String[6];                                //record 크기 할당(맞나..?)
                             for(int i=0; i<record.length; i++) record[i] = new String();    //record 초기화
                             record[0] = inputID.getText().toString();
-                            record[1] = "on";
+                            record[1] = "true";
                             saveSetting2DB(record);
                             dbManager.insertToDatabase(Database.UserTable._TABLENAME, record);
                             String[] temp = Record.parsingDate(ServerDatabaseManager.getTime());
-                            record[0] = temp[0] + "/" + temp[1] + "/" + temp[2];
+                            record[0] = temp[0] + "" + temp[1] + "" + temp[2];
                             record[1] = 0 + "";
                             dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, record);
                             Log.d("DATABASE", "---------user_registered--------");
