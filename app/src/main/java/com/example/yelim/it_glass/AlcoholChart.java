@@ -161,17 +161,39 @@ public class AlcoholChart extends AppCompatActivity {
         return 1;
     }
 
-    private int countTotal(int year, int month) {
+    private int countTotal() {
         recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
         return recordList.size();
     }
 
     private int countLight() {
-        return 0;
+        int count = 0;
+        recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
+        for(Record record : recordList) {
+            if(Integer.parseInt(record.getRecord()) < DatabaseManager.avgDrink - 350) {
+                count += 1;
+            }
+        }
+        return count;
     }
 
     private int countSoMuch() {
-        return 0;
+        int count = 0;
+        recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
+        for(Record record : recordList) {
+            if(Integer.parseInt(record.getRecord()) > DatabaseManager.avgDrink + 350) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+    private int totalML() {
+        int count = 0;
+        recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
+        for(Record record : recordList) {
+           count += Integer.parseInt(record.getRecord());
+        }
+        return count;
     }
 
     public void setMonth(int month) {
@@ -183,9 +205,9 @@ public class AlcoholChart extends AppCompatActivity {
     }
 
     private void drawCircles(){
-        completedCount = countCompleted(month);
-        totalCount = countTotal(year, month);
-        uncompletedCount = totalCount - completedCount;
+        completedCount = countSoMuch();
+        totalCount = countTotal();
+        uncompletedCount = countLight();
 
         completePercent = (totalCount * 100 / day);
 
@@ -201,6 +223,6 @@ public class AlcoholChart extends AppCompatActivity {
         completedText.setText(completedCount + "");     // 과음한 날
         uncompletedText.setText(uncompletedCount + "");     // 과음 안한 날
 
-        percentText.setText(completePercent + "ml");        // 총 음주량
+        percentText.setText(totalML() + "ml");        // 총 음주량
     }
 }

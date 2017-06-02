@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by Yelim on 2017-03-22.
@@ -338,6 +339,44 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
         db.close();
         return num;
+    }
+
+    public int getLocalUserWeight() {
+        int weight;
+        db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT " + Database.UserTable.WEIGHT + " FROM " + Database.UserTable._TABLENAME, null);
+        if (c.getCount() != 0) {
+            c.moveToNext();
+            String tempWeight = c.getString(0);
+            StringTokenizer tokenizer = new StringTokenizer(tempWeight, "~");
+            String startWeight = tokenizer.nextToken();
+            weight = Integer.parseInt(startWeight) + 5;
+
+            Log.d("getRecordNum", "weight=" + weight);
+        }
+        else {
+            Log.e("DBM", "getLocalUserWeight error");
+            weight = 0;
+        }
+        db.close();
+        return weight;
+    }
+
+    public String getLocalUserSex() {
+        String user_sex;
+        db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT " + Database.UserTable.SEX + " FROM " + Database.UserTable._TABLENAME, null);
+        if (c.getCount() != 0) {
+            c.moveToNext();
+            user_sex = c.getString(0);
+            Log.d("getRecordNum", "sex=" + user_sex);
+        }
+        else {
+            Log.e("DBM", "getLocalUserWeight error");
+            user_sex = "";
+        }
+        db.close();
+        return user_sex;
     }
 
 }

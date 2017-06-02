@@ -1,6 +1,7 @@
 package com.example.yelim.it_glass;
 
 import android.content.Context;
+import android.util.Log;
 
 /**
  * Created by sehyeon on 2017-05-02.
@@ -29,9 +30,12 @@ public class Alcoholysis {
         alcoholRatio = 0.7894;
         absorptionRatio = 0.7;
         sexFactor = 0.55;
+
+        dbManager = new DatabaseManager(context, DatabaseManager.DB_NAME + ".db", null, 1);
+
         weight = getWeight();
         sex = getSex();
-        dbManager = new DatabaseManager(context, DatabaseManager.DB_NAME + ".db", null, 1);
+
         /*
         if (sex.equals("XX")) {
             sexFactor = 0.55;
@@ -50,7 +54,7 @@ public class Alcoholysis {
     /**
      * @return time minutes required to alcoholysis
      */
-    int getTime(int vol, int weight, String sex) {
+    int getTime(int vol) {
         // 술의 양 * 알코올농도 * 알코올비중 * 체내흡수율 / 몸무게 * 성별계수 = 혈중알콜
         // 혈중알콜 / 감소량 *60 = 시간
 
@@ -67,14 +71,10 @@ public class Alcoholysis {
     }
 
     int getWeight() {
-        int weight =0 ;
-
-        return weight;
+        return dbManager.getLocalUserWeight();
     }
 
     String getSex() {
-        String sex = "";
-        return sex;
+        return dbManager.getLocalUserSex();
     }
-
 }

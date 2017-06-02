@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     MainFragment mainFragment;
     TextViewCallBack tvCallBack;
 
-    int alcoholPercent;
+    public static int alcoholPercent;
     private Alcoholysis alcoholysis;
     private String[] info;
     Handler handler;
@@ -273,10 +273,6 @@ public class MainActivity extends AppCompatActivity {
                     String tempPercent = items[item].toString().replace("%", "");
                     alcoholPercent = Integer.parseInt(tempPercent);
                 }
-                alcoholysis = new Alcoholysis(alcoholPercent, getApplicationContext());
-
-                // 되나 테스트용
-                Toast.makeText(mContext,  alcoholysis.getTime(700, 55, "woman")+"분", Toast.LENGTH_SHORT).show();
             }
         });
 

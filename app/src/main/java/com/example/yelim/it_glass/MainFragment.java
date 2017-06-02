@@ -24,6 +24,7 @@ public class MainFragment extends Fragment implements TextViewCallBack {
     TextView tvAlcholDetox;
     TextView tvAlcholChart;
     Context mContext;
+    private Alcoholysis alcoholysis;
     public MainFragment() {
 
     }
@@ -60,6 +61,10 @@ public class MainFragment extends Fragment implements TextViewCallBack {
         tvUserAvgDrink = (TextView) layout.findViewById(R.id.tvUserAvgDrink);
         tvUserAvgDrink.setText(DatabaseManager.avgDrink+"");
         Log.d("Fragment", "Start Main");
+
+        tvAlcholDetox = (TextView)layout.findViewById(R.id.tvAlcholDetox);
+        alcoholysis = new Alcoholysis(MainActivity.alcoholPercent, getContext());
+        tvAlcholDetox.setText("해독까지 " + alcoholysis.getTime(ServerDatabaseManager.getLocalUserDrink())+"분");
         return layout;
     }
 
@@ -68,5 +73,6 @@ public class MainFragment extends Fragment implements TextViewCallBack {
         if(tag.equals("agv_drink")) tvUserAvgDrink.setText(DatabaseManager.avgDrink);
         else if(tag.equals("realtime_drink")) tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
         else Log.e("updateTextView", "invalid tag");
+        tvAlcholDetox.setText("해독까지 " + alcoholysis.getTime(ServerDatabaseManager.getLocalUserDrink())+"분");
     }
 }
