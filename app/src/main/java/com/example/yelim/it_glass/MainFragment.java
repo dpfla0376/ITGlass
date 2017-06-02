@@ -30,6 +30,12 @@ public class MainFragment extends Fragment implements TextViewCallBack {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        tvUserAvgDrink.setText("평균 " + DatabaseManager.avgDrink + " ml");
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -59,7 +65,7 @@ public class MainFragment extends Fragment implements TextViewCallBack {
             }
         });
         tvUserAvgDrink = (TextView) layout.findViewById(R.id.tvUserAvgDrink);
-        tvUserAvgDrink.setText(DatabaseManager.avgDrink+"");
+        tvUserAvgDrink.setText("평균 " + DatabaseManager.avgDrink + " ml");
         Log.d("Fragment", "Start Main");
 
         tvAlcholDetox = (TextView)layout.findViewById(R.id.tvAlcholDetox);
@@ -70,7 +76,7 @@ public class MainFragment extends Fragment implements TextViewCallBack {
 
     @Override
     public void updateTextView(String tag, String data) {
-        if(tag.equals("agv_drink")) tvUserAvgDrink.setText(DatabaseManager.avgDrink);
+        if(tag.equals("avg_drink")) tvUserAvgDrink.setText("평균 " + DatabaseManager.avgDrink + " ml");
         else if(tag.equals("realtime_drink")) tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
         else Log.e("updateTextView", "invalid tag");
         tvAlcholDetox.setText("해독까지 " + alcoholysis.getTime(ServerDatabaseManager.getLocalUserDrink())+"분");
