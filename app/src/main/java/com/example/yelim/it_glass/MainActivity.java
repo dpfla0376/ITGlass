@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                             ServerDatabaseManager.turnOffDrinkTiming();
                             Log.d("Bluetooth", "NEW MESSAGE FROM YOUR DEVICE : " + fromDeviceMessage.toString());
                         } else {
-                            int vol = (int) Float.parseFloat(fromDeviceMessage.toString());
+                            int vol = (int)Float.parseFloat(fromDeviceMessage.toString());
                             String[] data = new String[2];
                             data[0] = ServerDatabaseManager.getTime();
                             data[1] = vol + "";
@@ -238,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     mainFragment = new MainFragment();
                     return mainFragment;
-                    //return new MainFragment();
                 case 1:
                     return new FriendlistFragment();
                 default:
@@ -274,10 +273,10 @@ public class MainActivity extends AppCompatActivity {
                     String tempPercent = items[item].toString().replace("%", "");
                     alcoholPercent = Integer.parseInt(tempPercent);
                 }
-                alcoholysis = new Alcoholysis(alcoholPercent);
+                alcoholysis = new Alcoholysis(alcoholPercent, getApplicationContext());
 
                 // 되나 테스트용
-                Toast.makeText(mContext,  alcoholysis.getTime(700, 55, "XX")+"분", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext,  alcoholysis.getTime(700, 55, "woman")+"분", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -1,5 +1,6 @@
 package com.example.yelim.it_glass;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,8 @@ public class MainFragment extends Fragment implements TextViewCallBack {
     TextView tvUserDrink;
     TextView tvUserAvgDrink;
     TextView tvAlcholDetox;
+    TextView tvAlcholChart;
+    Context mContext;
     public MainFragment() {
 
     }
@@ -33,6 +36,7 @@ public class MainFragment extends Fragment implements TextViewCallBack {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.fragment_main, container, false);
+        mContext = getActivity();
         tvUserName = (TextView) layout.findViewById(R.id.tvUserName);
         tvUserName.setText(ServerDatabaseManager.getLocalUserID() + " 님");
         imgGlass = (ImageView) layout.findViewById(R.id.imgGlass);
@@ -45,11 +49,12 @@ public class MainFragment extends Fragment implements TextViewCallBack {
         });
         tvUserDrink = (TextView) layout.findViewById(R.id.tvUserDrink);
         tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
-        tvAlcholDetox = (TextView) layout.findViewById(R.id.tvAlcholDetox);
-        tvAlcholDetox.setOnClickListener(new View.OnClickListener() {
+        tvAlcholChart = (TextView) layout.findViewById(R.id.alcoholChart);
+        tvAlcholChart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(mContext, AlcoholChart.class);
+                startActivity(intent);
             }
         });
         tvUserAvgDrink = (TextView) layout.findViewById(R.id.tvUserAvgDrink);
