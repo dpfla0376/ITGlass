@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -139,8 +141,12 @@ public class SettingActivity extends AppCompatActivity {
                     DatabaseManager.avgDrink = (DatabaseManager.avgDrink * num + iDrink) / (num + 1);
                     dbManager.updateDatabase(Database.UserTable._TABLENAME, Database.UserTable.AVG_DRINK, DatabaseManager.avgDrink+"", Database.UserTable.ID, ServerDatabaseManager.getLocalUserID());
                     Toast.makeText(mContext, "평균 음주량=" + DatabaseManager.avgDrink, Toast.LENGTH_SHORT).show();
-                    TextView tv = (TextView) findViewById(R.id.tvUserAvgDrink);
-                    tv.setText(DatabaseManager.avgDrink);
+                    MainActivity.handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    });
                 }
             }
         });

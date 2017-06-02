@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NotificationCompat;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     int alcoholPercent;
     private Alcoholysis alcoholysis;
     private String[] info;
-    Handler handler;
+    static Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,13 @@ public class MainActivity extends AppCompatActivity {
         mContext = this;
         Log.d("DATABASE", "---------" + dbManager.getDatabasePath() + "---------");
 
-        handler = new Handler();
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                if(msg.what == 1) {
+                    mainFragment.updateTextView("avg_drink", (String) msg.obj);
+                }
+            }
+        };
         vp = (ViewPager) findViewById(R.id.vp);
         ll = (LinearLayout) findViewById(R.id.ll);
         setting = (TextView) findViewById(R.id.setting);
@@ -118,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         String[] warning = {"과음하셨어요! 오늘은 이제 그만!"};
-
+/*
         //0 = request code
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -134,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0, notiBuilder.build());
-
+*/
     }
 
     @Override
@@ -296,20 +303,29 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             int iDrink = Integer.parseInt(drink);
+            int num = dbManager.getRecordNum();
             if(iDrink > DatabaseManager.avgDrink + 350) {
-                iDrink *= 0.5 * iDrink;
+                iDrink = (int) (0.5 * iDrink);
             }
             else if(iDrink < DatabaseManager.avgDrink - 350) {
-                iDrink *= 1.5 * iDrink;
+                iDrink = (int) (1.5 * iDrink);
             }
             else {
 
             }
-            dbManager.updateDatabase(Database.UserTable._TABLENAME, Database.UserTable.AVG_DRINK, iDrink+"", Database.UserTable.ID, ServerDatabaseManager.getLocalUserID());
+            DatabaseManager.avgDrink = (DatabaseManager.avgDrink * num + iDrink) / (num + 1);
+            dbManager.updateDatabase(Database.UserTable._TABLENAME, Database.UserTable.AVG_DRINK, DatabaseManager.avgDrink+"", Database.UserTable.ID, ServerDatabaseManager.getLocalUserID());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mainFragment.updateTextView("avg_drink", DatabaseManager.avgDrink+"");
+                }
+            });
         }
     }
 
     private void checkAlchol() {
+        Log.d("checkAlchol", ServerDatabaseManager.getLocalUserDrink() + " ml");
         if(ServerDatabaseManager.getLocalUserDrink() > DatabaseManager.avgDrink + 350) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -333,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.notify(0, notiBuilder.build());
         }
 
-
-
     }
+
 }
