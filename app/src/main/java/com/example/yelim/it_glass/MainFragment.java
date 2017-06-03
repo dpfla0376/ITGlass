@@ -79,7 +79,6 @@ public class MainFragment extends Fragment implements TextViewCallBack {
         if(tag.equals("avg_drink")) tvUserAvgDrink.setText("평균 " + DatabaseManager.avgDrink + " ml");
         else if(tag.equals("realtime_drink")) tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
         else Log.e("updateTextView", "invalid tag");
-
         tvAlcholDetox.setText("해독까지 " + alcoholysis.getTime(ServerDatabaseManager.getLocalUserDrink())+"분");
     }
 }
