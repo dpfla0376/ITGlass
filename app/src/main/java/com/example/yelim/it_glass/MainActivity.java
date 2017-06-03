@@ -214,6 +214,8 @@ public class MainActivity extends AppCompatActivity {
                         else if (fromDeviceMessage.toString().equals("drank")) {
                             ServerDatabaseManager.turnOffDrinkTiming();
                             Log.d("Bluetooth", "NEW MESSAGE FROM YOUR DEVICE : " + fromDeviceMessage.toString());
+                        } else if (fromDeviceMessage.toString().equals("")) {
+                            Log.e("MainBT", "fromDeviceMessage is empty!!!!");
                         } else {
                             int vol = (int)Float.parseFloat(fromDeviceMessage.toString());
                             String[] data = new String[2];
