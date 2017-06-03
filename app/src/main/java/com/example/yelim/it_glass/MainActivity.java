@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     mainFragment.updateTextView("realtime_drink", temp);
+                                    mainFragment.updateTextView("alchol_detox", "");
                                 }
                             });
                         }
@@ -288,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mainFragment.updateTextView("none", "");
+                        mainFragment.updateTextView("alchol_detox", "");
                     }
                 });
             }

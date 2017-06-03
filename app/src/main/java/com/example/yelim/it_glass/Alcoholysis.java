@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class Alcoholysis {
     int vol;
-    int alcoholPercent;
+    double alcoholPercent;
     double alcoholConcentration;
     double alcoholRatio;
     double absorptionRatio;
@@ -25,20 +25,24 @@ public class Alcoholysis {
      * @param alcoholPercent
      */
     Alcoholysis(int alcoholPercent, Context context) {
-        this.alcoholPercent = alcoholPercent;
+        this.alcoholPercent = (float) alcoholPercent * 0.01;
         alcoholConcentration = alcoholPercent * 0.1;
         alcoholRatio = 0.7894;
-        absorptionRatio = 0.7;
         dbManager = new DatabaseManager(context, DatabaseManager.DB_NAME + ".db", null, 1);
         weight = getWeight();
         sex = getSex();
 
         if (sex.equals("woman")) {
             sexFactor = 0.55;
+            absorptionRatio = 0.6;
         } else if (sex.equals("man")) {
             sexFactor = 0.69;
+            absorptionRatio = 0.7;
         }
-        else sexFactor = 0.62;
+        else {
+            sexFactor = 0.62;
+            absorptionRatio = 0.65;
+        }
         decrement = 0.019;
     }
 
@@ -49,7 +53,7 @@ public class Alcoholysis {
         // 술의 양 * 알코올농도 * 알코올비중 * 체내흡수율 / 몸무게 * 성별계수 = 혈중알콜
         // 혈중알콜 / 감소량 *60 = 시간
 
-        int minutes = (int) ((vol * 0.001 * alcoholPercent * alcoholConcentration * alcoholRatio * absorptionRatio * 60) / (sexFactor * weight * decrement));
+        int minutes = (int) ((vol * alcoholConcentration * alcoholRatio * absorptionRatio * 60) / (sexFactor * weight * decrement));
         Log.d("VOL", vol+"");
         Log.d("Percent", alcoholPercent+"");
 
