@@ -226,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     mainFragment.updateTextView("realtime_drink", temp);
+                                    mainFragment.updateTextView("alchol_detox", "");
                                 }
                             });
                         }
