@@ -367,9 +367,15 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (c.getCount() != 0) {
             c.moveToNext();
             String tempWeight = c.getString(0);
-            StringTokenizer tokenizer = new StringTokenizer(tempWeight, "~");
-            String startWeight = tokenizer.nextToken();
-            weight = Integer.parseInt(startWeight) + 5;
+            StringTokenizer tokenizer;
+            if(tempWeight.contains("~")) {
+                tokenizer = new StringTokenizer(tempWeight, "~");
+                String startWeight = tokenizer.nextToken();
+                weight = Integer.parseInt(startWeight) + 5;
+            }
+            else {
+                weight = 65;
+            }
 
             Log.d("getRecordNum", "weight=" + weight);
         }

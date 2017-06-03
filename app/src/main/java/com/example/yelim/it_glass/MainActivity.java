@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mainFragment.updateTextView("none", "");
+                        mainFragment.updateTextView("alchol_detox", "");
                     }
                 });
             }
