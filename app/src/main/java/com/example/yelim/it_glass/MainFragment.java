@@ -86,6 +86,7 @@ public class MainFragment extends Fragment implements TextViewCallBack {
         if(tag.equals("avg_drink")) tvUserAvgDrink.setText("평균 " + DatabaseManager.avgDrink + " ml");
         else if(tag.equals("realtime_drink")) tvUserDrink.setText(ServerDatabaseManager.getLocalUserDrink() + " ml");
         else if(tag.equals("alchol_detox")) {
+            alcoholysis.setPercent(MainActivity.alcoholPercent);
             int amount = alcoholysis.getTime(ServerDatabaseManager.getLocalUserDrink());
             int hour = amount / 60;
             int min = amount - hour * 60;

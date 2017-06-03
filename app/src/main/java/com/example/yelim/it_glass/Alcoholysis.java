@@ -67,4 +67,8 @@ public class Alcoholysis {
     String getSex() {
         return dbManager.getLocalUserSex();
     }
+
+    public void setPercent(int percent){
+        this.alcoholPercent = percent;
+    }
 }
