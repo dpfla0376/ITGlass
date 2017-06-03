@@ -48,17 +48,18 @@ public class Alcoholysis {
         // 술의 양 * 알코올농도 * 알코올비중 * 체내흡수율 / 몸무게 * 성별계수 = 혈중알콜
         // 혈중알콜 / 감소량 *60 = 시간
 
-        int minutes = (int) ((vol * alcoholPercent * alcoholConcentration * alcoholRatio * absorptionRatio * 60) / (sexFactor * weight * decrement));
-        Log.d("TIME TEST", minutes+"");
+        int minutes = (int) ((vol * 0.001 * alcoholPercent * alcoholConcentration * alcoholRatio * absorptionRatio * 60) / (sexFactor * weight * decrement));
+        Log.d("VOL", vol+"");
+        Log.d("Percent", alcoholPercent+"");
 
         return minutes;
     }
 
     int getWeight() {
-        return 55;
+        return dbManager.getLocalUserWeight();
     }
 
     String getSex() {
-        return "man";
+        return dbManager.getLocalUserSex();
     }
 }

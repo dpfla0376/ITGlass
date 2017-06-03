@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     MainFragment mainFragment;
     TextViewCallBack tvCallBack;
 
-    public static int alcoholPercent;
+    public static int alcoholPercent = 4;
     private Alcoholysis alcoholysis;
     private String[] info;
     static Handler handler;
@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             };
             t.start();
         }
+
+        selectDrink();
 
         vp.setAdapter(new pagerAdapter(getSupportFragmentManager()));
         vp.setCurrentItem(0);
@@ -195,11 +197,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void callBackMethod(int flag, String fromDeviceMessage) {
                 Log.d("Bluetooth", "I'm MainActivity. I got your message : " + fromDeviceMessage.toString());
-
                 switch (flag) {
                     case 100:
                         Log.d("Bluetooth", "DEVICE IS CONNECTED");
-                        selectDrink();
                         break;
                     case 200:
                         // 술을 마신다
@@ -279,7 +279,14 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     String tempPercent = items[item].toString().replace("%", "");
                     alcoholPercent = Integer.parseInt(tempPercent);
+                    Log.d("SELECT PERCENT",alcoholPercent+"");
                 }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainFragment.updateTextView("none", "");
+                    }
+                });
             }
         });
 
