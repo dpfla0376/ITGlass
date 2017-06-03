@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class Alcoholysis {
     int vol;
-    double alcoholPercent;
+    int alcoholPercent;
     double alcoholConcentration;
     double alcoholRatio;
     double absorptionRatio;
@@ -25,7 +25,7 @@ public class Alcoholysis {
      * @param alcoholPercent
      */
     Alcoholysis(int alcoholPercent, Context context) {
-        this.alcoholPercent = (float) alcoholPercent * 0.01;
+        this.alcoholPercent = alcoholPercent;
         alcoholConcentration = alcoholPercent * 0.1;
         alcoholRatio = 0.7894;
         dbManager = new DatabaseManager(context, DatabaseManager.DB_NAME + ".db", null, 1);
@@ -53,7 +53,7 @@ public class Alcoholysis {
         // 술의 양 * 알코올농도 * 알코올비중 * 체내흡수율 / 몸무게 * 성별계수 = 혈중알콜
         // 혈중알콜 / 감소량 *60 = 시간
 
-        int minutes = (int) ((vol * alcoholConcentration * alcoholRatio * absorptionRatio * 60) / (sexFactor * weight * decrement));
+        int minutes = (int) ((vol * alcoholPercent * 0.001 * alcoholRatio * absorptionRatio * 60) / (sexFactor * weight * decrement));
         Log.d("VOL", vol+"");
         Log.d("Percent", alcoholPercent+"");
 
