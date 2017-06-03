@@ -57,6 +57,7 @@ public class Alcoholysis {
         Log.d("VOL", vol+"");
         Log.d("Percent", alcoholPercent+"");
 
+
         return minutes;
     }
 
