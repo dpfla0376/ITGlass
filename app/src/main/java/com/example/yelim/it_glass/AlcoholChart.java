@@ -162,15 +162,16 @@ public class AlcoholChart extends AppCompatActivity {
     }
 
     private int countTotal() {
-        recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
-        return recordList.size();
+        //recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
+        //return recordList.size();
+        return dbManager.getMonthRecordNum(year, month);
     }
 
     private int countLight() {
         int count = 0;
         recordList = (ArrayList<Record>) dbManager.getDrinkList(year, month);
         for(Record record : recordList) {
-            if(Integer.parseInt(record.getRecord()) < DatabaseManager.avgDrink - 350) {
+            if(Integer.parseInt(record.getRecord()) != 0 && Integer.parseInt(record.getRecord()) < DatabaseManager.avgDrink / 2) {
                 count += 1;
             }
         }

@@ -325,8 +325,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
     public int getRecordNum() {
         int num;
         db = getReadableDatabase();
-        String[] temp = Record.parsingDate(ServerDatabaseManager.getTime());
-        String[] resultData = new String[2];
         Cursor c = db.rawQuery("SELECT Count(*) FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE NOT (" + Database.DrinkRecordTable.DRINK + "='0')", null);
         if (c.getCount() != 0) {
             c.moveToNext();
@@ -335,6 +333,27 @@ public class DatabaseManager extends SQLiteOpenHelper {
         }
         else {
             Log.e("DBM", "getLastDateDrink error");
+            num = 0;
+        }
+        db.close();
+        return num;
+    }
+
+    public int getMonthRecordNum(int conYear, int conMonth) {
+        int num;
+        db = getReadableDatabase();
+        String data;
+        if (conMonth < 10) data = conYear + "0" + conMonth;
+        else data = conYear + "" + conMonth;
+        Cursor c = db.rawQuery("SELECT Count(*) FROM (SELECT * FROM " + Database.DrinkRecordTable._TABLENAME + " WHERE " + Database.DrinkRecordTable.DATE
+                + " LIKE '" + data + "%') WHERE NOT (" + Database.DrinkRecordTable.DRINK + "='0')", null);
+        if (c.getCount() != 0) {
+            c.moveToNext();
+            num = Integer.parseInt(c.getString(0));
+            Log.d("getMonthRecordNum", "num=" + num);
+        }
+        else {
+            Log.e("DBM", "getMonthRecordNum error");
             num = 0;
         }
         db.close();

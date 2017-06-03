@@ -81,13 +81,6 @@ public class SettingActivity extends AppCompatActivity {
                                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                //restart the app
-                                                /*Intent mStartActivity = new Intent(mContext, LogoActivity.class);
-                                                int mPendingIntentId = 0000;
-                                                PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-                                                AlarmManager amr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-                                                amr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);*/
-
                                                 Intent resultIntent = new Intent();
                                                 resultIntent.putExtra("app_restart", "true");
                                                 setResult(RESULT_OK, resultIntent);
@@ -111,37 +104,16 @@ public class SettingActivity extends AppCompatActivity {
         tvContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] data = {"20170601", "800"};
-                dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
-                data[0] = "20170531";
-                data[1] = "360";
-                dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
-                Toast.makeText(mContext, "실험 데이터 삽입 완료", Toast.LENGTH_SHORT).show();
+                Message msg = MainActivity.handler.obtainMessage();
+                msg.what = 1;
+                msg.obj = "sample_data_start";
+                MainActivity.handler.sendMessage(msg);
 
-                String drink = dbManager.getLastDateDrink();
-                Toast.makeText(mContext, "마지막날 음주량=" + drink, Toast.LENGTH_SHORT).show();
-                if(drink == null) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("app_restart", "false");
+                setResult(RESULT_OK, resultIntent);
+                finish();
 
-                }
-                else if(drink.equals("0")){
-
-                }
-                else {
-                    int iDrink = Integer.parseInt(drink);
-                    int num = dbManager.getRecordNum();
-                    if(iDrink > DatabaseManager.avgDrink + 350) {
-                        iDrink = (int) (0.5 * iDrink);
-                    }
-                    else if(iDrink < DatabaseManager.avgDrink - 350) {
-                        iDrink = (int) (1.5 * iDrink);
-                    }
-                    else {
-
-                    }
-                    DatabaseManager.avgDrink = (DatabaseManager.avgDrink * num + iDrink) / (num + 1);
-                    dbManager.updateDatabase(Database.UserTable._TABLENAME, Database.UserTable.AVG_DRINK, DatabaseManager.avgDrink+"", Database.UserTable.ID, ServerDatabaseManager.getLocalUserID());
-                    Toast.makeText(mContext, "평균 음주량=" + DatabaseManager.avgDrink, Toast.LENGTH_SHORT).show();
-                }
             }
         });
     }
@@ -162,4 +134,5 @@ public class SettingActivity extends AppCompatActivity {
         File file = new File(strDBFilePath);
         file.delete();
     }
+
 }

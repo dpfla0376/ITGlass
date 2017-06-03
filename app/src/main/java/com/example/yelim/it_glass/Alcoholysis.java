@@ -38,6 +38,7 @@ public class Alcoholysis {
         } else if (sex.equals("man")) {
             sexFactor = 0.69;
         }
+        else sexFactor = 0.62;
         decrement = 0.019;
     }
 

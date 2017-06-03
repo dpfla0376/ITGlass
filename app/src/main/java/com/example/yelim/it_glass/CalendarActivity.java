@@ -244,10 +244,15 @@ public class CalendarActivity extends AppCompatActivity {
             // 내용! 여기서 입력!!
             holder.day.setText("" + getItem(position).getDay());
             holder.record.setText("" + getItem(position).getRecord());
-            holder.color = Color.TRANSPARENT;
-            if(!getItem(position).getRecord().equals("") && Integer.parseInt(getItem(position).getRecord()) > DatabaseManager.avgDrink + 350) {
+
+            if(getItem(position).getRecord().equals("") || getItem(position).getRecord().equals("0")) holder.color = Color.TRANSPARENT;
+            else if(Integer.parseInt(getItem(position).getRecord()) > DatabaseManager.avgDrink + 350) {
                 holder.color = Color.RED;
             }
+            else if(Integer.parseInt(getItem(position).getRecord()) < DatabaseManager.avgDrink / 2) {
+                holder.color = Color.GREEN;
+            }
+            else holder.color = Color.YELLOW;
             convertView.setBackgroundColor(holder.color);
 
             // 월화수목금토일

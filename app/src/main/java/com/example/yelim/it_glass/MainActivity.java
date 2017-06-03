@@ -55,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
         handler = new Handler() {
             public void handleMessage(Message msg) {
                 if(msg.what == 1) {
-                    mainFragment.updateTextView("avg_drink", (String) msg.obj);
+                    if(msg.obj.equals("sample_data_start")) {
+                        sampleDataPush();
+                    }
                 }
             }
         };
@@ -317,6 +319,7 @@ public class MainActivity extends AppCompatActivity {
                     mainFragment.updateTextView("avg_drink", DatabaseManager.avgDrink+"");
                 }
             });
+            Toast.makeText(mContext, "평균 음주량=" + DatabaseManager.avgDrink, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -344,6 +347,87 @@ public class MainActivity extends AppCompatActivity {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(0, notiBuilder.build());
         }
+
+    }
+
+    private void sampleDataPush() {
+        Toast.makeText(mContext, "실험 데이터 삽입 시작", Toast.LENGTH_SHORT).show();
+
+        String[] data = {"20170527", "485"};
+        dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+        avgDrinkAlgorithm();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mainFragment.updateTextView("avg_drink", "");
+            }
+        });
+
+        data[0] = "20170528";
+        data[1] = "172";
+        dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+        avgDrinkAlgorithm();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mainFragment.updateTextView("avg_drink", "");
+            }
+        });
+
+        data[0] = "20170529";
+        data[1] = "320";
+        dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+        avgDrinkAlgorithm();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mainFragment.updateTextView("avg_drink", "");
+            }
+        });
+
+        data[0] = "20170530";
+        data[1] = "720";
+        dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+        avgDrinkAlgorithm();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mainFragment.updateTextView("avg_drink", "");
+            }
+        });
+
+        data[0] = "20170531";
+        data[1] = "360";
+        dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+        avgDrinkAlgorithm();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mainFragment.updateTextView("avg_drink", "");
+            }
+        });
+
+        data[0] = "20170601";
+        data[1] = "358";
+        dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+        avgDrinkAlgorithm();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mainFragment.updateTextView("avg_drink", "");
+            }
+        });
+
+        data[0] = "20170602";
+        data[1] = "896";
+        dbManager.insertToDatabase(Database.DrinkRecordTable._TABLENAME, data);
+        avgDrinkAlgorithm();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mainFragment.updateTextView("avg_drink", "");
+            }
+        });
 
     }
 
