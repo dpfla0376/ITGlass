@@ -244,6 +244,7 @@ public class BluetoothManager {
             }
             try {
                 String temp = new String(toDeviceString.getBytes());
+                temp = temp + ".";
                 Log.d("BLUETOOTH", "trying write data to my device" + temp);
                 toDeviceStream.write(temp.getBytes());
             } catch (IOException e) {
@@ -253,7 +254,7 @@ public class BluetoothManager {
         }
         else
         {
-            waitingTask.add(toDeviceString);
+            waitingTask.add(toDeviceString+".");
         }
     }
 
